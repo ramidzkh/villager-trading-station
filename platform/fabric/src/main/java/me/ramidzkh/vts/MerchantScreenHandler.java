@@ -12,6 +12,7 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MerchantMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.trading.MerchantOffer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,9 +36,11 @@ public class MerchantScreenHandler {
         ItemStack cursor = menu.getCarried();
 
         if (cursor.is(VillagerTradingStationFabric.Tags.QUOTE_CONVERTABLE)) {
+            MerchantOffer offer = menu.getOffers().get(shopItem);
+
             ItemStack quote = new ItemStack(VillagerTradingStationFabric.Items.QUOTE);
             QuoteItem item = (QuoteItem) quote.getItem();
-            item.setOffer(quote, menu.getOffers().get(shopItem));
+            item.setQuote(quote, new QuoteItem.Quote(offer.getCostA(), offer.getCostB(), offer.getResult()));
 
             if (!player.getAbilities().instabuild) {
                 cursor.shrink(1);

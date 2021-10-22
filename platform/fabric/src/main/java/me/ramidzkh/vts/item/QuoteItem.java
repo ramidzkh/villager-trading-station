@@ -13,7 +13,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,9 +26,10 @@ public class QuoteItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> list, TooltipFlag tooltipFlag) {
-        ItemStack a = getA(itemStack);
-        ItemStack b = getB(itemStack);
-        ItemStack result = getResult(itemStack);
+        Quote quote = getQuote(itemStack);
+        ItemStack a = quote.a();
+        ItemStack b = quote.b();
+        ItemStack result = quote.result();
 
         list.add(new TextComponent("- Requires ").append(a.getHoverName()).append(" * ").append(Integer.toString(a.getCount())));
 
@@ -60,13 +60,19 @@ public class QuoteItem extends Item {
     }
 
     public Quote getQuote(ItemStack stack) {
-        return new Quote(getA(stack), getB(stack), getResult(stack));
+        CompoundTag tag = stack.getTag();
+
+        if (tag != null) {
+            return new Quote(ItemStack.of(tag.getCompound("A")), ItemStack.of(tag.getCompound("B")), ItemStack.of(tag.getCompound("Result")));
+        } else {
+            return Quote.EMPTY;
+        }
     }
 
-    public void setOffer(ItemStack stack, MerchantOffer offer) {
-        CompoundTag a = offer.getCostA().save(new CompoundTag());
-        CompoundTag b = offer.getCostB().save(new CompoundTag());
-        CompoundTag result = offer.getResult().save(new CompoundTag());
+    public void setQuote(ItemStack stack, Quote quote) {
+        CompoundTag a = quote.a().save(new CompoundTag());
+        CompoundTag b = quote.b().save(new CompoundTag());
+        CompoundTag result = quote.result().save(new CompoundTag());
 
         CompoundTag tag = stack.getOrCreateTag();
         tag.put("A", a);
@@ -74,36 +80,8 @@ public class QuoteItem extends Item {
         tag.put("Result", result);
     }
 
-    private ItemStack getA(ItemStack stack) {
-        CompoundTag tag = stack.getTag();
-
-        if (tag != null) {
-            return ItemStack.of(tag.getCompound("A"));
-        } else {
-            return ItemStack.EMPTY;
-        }
-    }
-
-    private ItemStack getB(ItemStack stack) {
-        CompoundTag tag = stack.getTag();
-
-        if (tag != null) {
-            return ItemStack.of(tag.getCompound("B"));
-        } else {
-            return ItemStack.EMPTY;
-        }
-    }
-
-    private ItemStack getResult(ItemStack stack) {
-        CompoundTag tag = stack.getTag();
-
-        if (tag != null) {
-            return ItemStack.of(tag.getCompound("Result"));
-        } else {
-            return ItemStack.EMPTY;
-        }
-    }
-
     public record Quote(ItemStack a, ItemStack b, ItemStack result) {
+
+        public static final Quote EMPTY = new Quote(ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY);
     }
 }

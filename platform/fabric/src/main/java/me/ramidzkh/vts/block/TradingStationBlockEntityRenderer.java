@@ -15,7 +15,6 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class TradingStationBlockEntityRenderer implements BlockEntityRenderer<TradingStationBlockEntity> {
@@ -29,7 +28,7 @@ public class TradingStationBlockEntityRenderer implements BlockEntityRenderer<Tr
                 if (!view.isResourceBlank()) {
                     ItemStack o = view.getResource().toStack();
                     o.enchant(Enchantments.KNOCKBACK, 1);
-                    variants.addAll(Collections.nCopies((int) view.getAmount(), o));
+                    variants.add(o);
                 }
             }
         }
@@ -46,7 +45,7 @@ public class TradingStationBlockEntityRenderer implements BlockEntityRenderer<Tr
             matrices.pushPose();
             matrices.translate(0.5F, 1.25F, 0.5F);
             matrices.mulPose(Vector3f.YP.rotationDegrees(angles[i] + time));
-            matrices.translate((variants.size() / 35F) * 1.125F, 0F, 0.25F);
+            matrices.translate(0.875F, 0F, 0.25F);
             matrices.mulPose(Vector3f.YP.rotationDegrees(90F));
             matrices.translate(0D, 0.075 * Mth.sin((time + i * 10) / 5), 0F);
             Minecraft.getInstance().getItemRenderer().renderStatic(variants.get(i), ItemTransforms.TransformType.GROUND, light, overlay, matrices, multiBufferSource, 0);
