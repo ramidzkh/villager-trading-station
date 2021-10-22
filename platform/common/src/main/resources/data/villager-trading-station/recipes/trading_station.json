@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " E ",
+    "ILI",
+    "IBI"
+  ],
+  "key": {
+    "E": {
+      "item": "minecraft:emerald"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "L": {
+      "item": "minecraft:lectern"
+    },
+    "B": {
+      "item": "minecraft:bookshelf"
+    }
+  },
+  "result": {
+    "item": "villager-trading-station:trading_station"
+  }
+}
