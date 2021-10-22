@@ -1,12 +1,14 @@
 package me.ramidzkh.vts.block;
 
 import me.ramidzkh.vts.VillagerTradingStationFabric;
+import me.ramidzkh.vts.item.QuoteItem;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.FilteringStorage;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,6 +16,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Containers;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.npc.AbstractVillager;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -68,6 +73,45 @@ public class TradingStationBlockEntity extends BlockEntity implements BlockEntit
 
     public Storage<ItemVariant> getQuotes() {
         return quoteStorage;
+    }
+
+    public void interact(AbstractVillager villager) {
+        for (int i = 0; i < quotes.getContainerSize(); i++) {
+            ItemStack stack = quotes.getItem(i);
+
+            if (!(stack.getItem() instanceof QuoteItem quoteItem)) {
+                continue;
+            }
+
+            QuoteItem.Quote quote = quoteItem.getQuote(stack);
+            MerchantOffer myOffer = null;
+
+            for (MerchantOffer offer : villager.getOffers()) {
+                if (offer.isOutOfStock()) {
+                    continue;
+                }
+
+                // MerchantOffer#satisfiedBy but exact amounts
+                if (ItemStack.isSame(offer.getResult(), quote.result())
+                    && offer.satisfiedBy(quote.a(), quote.b())
+                    && offer.getCostA().getCount() == quote.a().getCount()
+                    && offer.getCostB().getCount() == quote.b().getCount()) {
+                    myOffer = offer;
+                    break;
+                }
+            }
+
+            if (myOffer != null) {
+                try (Transaction transaction = Transaction.openOuter()) {
+                    if (inputStorage.extract(ItemVariant.of(quote.a()), quote.a().getCount(), transaction) == quote.a().getCount()
+                        && (quote.b().isEmpty() || inputStorage.extract(ItemVariant.of(quote.b()), quote.b().getCount(), transaction) == quote.b().getCount())
+                        && outputStorage.insert(ItemVariant.of(quote.result()), quote.result().getCount(), transaction) == quote.result().getCount()) {
+                        villager.notifyTrade(myOffer);
+                        transaction.commit();
+                    }
+                }
+            }
+        }
     }
 
     public void drop(Level level, BlockPos blockPos) {

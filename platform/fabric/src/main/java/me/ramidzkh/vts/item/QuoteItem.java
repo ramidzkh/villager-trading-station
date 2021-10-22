@@ -59,6 +59,10 @@ public class QuoteItem extends Item {
         return InteractionResultHolder.pass(hand);
     }
 
+    public Quote getQuote(ItemStack stack) {
+        return new Quote(getA(stack), getB(stack), getResult(stack));
+    }
+
     public void setOffer(ItemStack stack, MerchantOffer offer) {
         CompoundTag a = offer.getCostA().save(new CompoundTag());
         CompoundTag b = offer.getCostB().save(new CompoundTag());
@@ -70,7 +74,7 @@ public class QuoteItem extends Item {
         tag.put("Result", result);
     }
 
-    public ItemStack getA(ItemStack stack) {
+    private ItemStack getA(ItemStack stack) {
         CompoundTag tag = stack.getTag();
 
         if (tag != null) {
@@ -80,7 +84,7 @@ public class QuoteItem extends Item {
         }
     }
 
-    public ItemStack getB(ItemStack stack) {
+    private ItemStack getB(ItemStack stack) {
         CompoundTag tag = stack.getTag();
 
         if (tag != null) {
@@ -90,7 +94,7 @@ public class QuoteItem extends Item {
         }
     }
 
-    public ItemStack getResult(ItemStack stack) {
+    private ItemStack getResult(ItemStack stack) {
         CompoundTag tag = stack.getTag();
 
         if (tag != null) {
@@ -98,5 +102,8 @@ public class QuoteItem extends Item {
         } else {
             return ItemStack.EMPTY;
         }
+    }
+
+    public record Quote(ItemStack a, ItemStack b, ItemStack result) {
     }
 }
