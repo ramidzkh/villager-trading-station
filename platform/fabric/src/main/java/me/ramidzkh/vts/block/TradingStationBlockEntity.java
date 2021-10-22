@@ -11,7 +11,6 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.FilteringStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
@@ -55,7 +54,7 @@ public class TradingStationBlockEntity extends BlockEntity implements BlockEntit
         quotes.addListener(this);
     }
 
-    public Storage<ItemVariant> getStorage(Direction direction) {
+    public Storage<ItemVariant> getStorage() {
         return exposed;
     }
 
