@@ -16,7 +16,8 @@
   "name": "Villager Trading Station",
   "description": "Automated villager trading",
   "authors": [
-    "ramidzkh"
+    "ramidzkh",
+    "ueaj"
   ],
   "license": [
     "LGPL-3.0-or-later"

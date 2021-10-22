@@ -1,13 +1,14 @@
 package me.ramidzkh.vts;
 
-import dev.architectury.registry.block.BlockProperties;
 import me.ramidzkh.vts.block.TradingStationBlock;
 import me.ramidzkh.vts.block.TradingStationBlockEntity;
 import me.ramidzkh.vts.item.QuoteItem;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.tag.TagFactory;
+import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.minecraft.core.Registry;
 import net.minecraft.tags.Tag;
@@ -33,7 +34,7 @@ public interface VillagerTradingStationFabric {
 
     interface Blocks {
 
-        Block TRADING_STATION = new TradingStationBlock(BlockProperties.of(Material.WOOD));
+        Block TRADING_STATION = new TradingStationBlock(FabricBlockSettings.of(Material.WOOD).strength(0.2F, 2.5F).requiresTool().breakByTool(FabricToolTags.SHEARS));
 
         private static void register() {
             Registry.register(Registry.BLOCK, VillagerTradingStation.BlockIds.TRADING_STATION, TRADING_STATION);
@@ -42,7 +43,7 @@ public interface VillagerTradingStationFabric {
 
     interface BlockEntities {
 
-        BlockEntityType<? extends TradingStationBlockEntity> TRADING_STATION = FabricBlockEntityTypeBuilder.create((pos, state) -> {
+        BlockEntityType<TradingStationBlockEntity> TRADING_STATION = FabricBlockEntityTypeBuilder.create((pos, state) -> {
             return new TradingStationBlockEntity(BlockEntities.TRADING_STATION, pos, state);
         }, Blocks.TRADING_STATION).build();
 

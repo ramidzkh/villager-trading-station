@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "minecraft:paper"
+    "minecraft:paper",
+    "villager-trading-station:quote"
   ]
 }

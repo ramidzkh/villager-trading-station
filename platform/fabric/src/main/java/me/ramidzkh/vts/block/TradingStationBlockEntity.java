@@ -14,6 +14,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Container;
+import net.minecraft.world.ContainerListener;
 import net.minecraft.world.Containers;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.npc.AbstractVillager;
@@ -26,7 +28,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 
-public class TradingStationBlockEntity extends BlockEntity implements BlockEntityClientSerializable {
+public class TradingStationBlockEntity extends BlockEntity implements BlockEntityClientSerializable, ContainerListener {
 
     private final SimpleContainer inputs = new SimpleContainer(9);
     private final SimpleContainer outputs = new SimpleContainer(9);
@@ -48,26 +50,12 @@ public class TradingStationBlockEntity extends BlockEntity implements BlockEntit
     public TradingStationBlockEntity(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
         super(blockEntityType, blockPos, blockState);
 
-        inputs.addListener(container -> {
-            if (level instanceof ServerLevel) {
-                sync();
-            }
-        });
-
-        outputs.addListener(container -> {
-            if (level instanceof ServerLevel) {
-                sync();
-            }
-        });
-
-        quotes.addListener(container -> {
-            if (level instanceof ServerLevel) {
-                sync();
-            }
-        });
+        inputs.addListener(this);
+        outputs.addListener(this);
+        quotes.addListener(this);
     }
 
-    public Storage<ItemVariant> getStorage(@SuppressWarnings("unused") Direction direction) {
+    public Storage<ItemVariant> getStorage(Direction direction) {
         return exposed;
     }
 
@@ -146,5 +134,12 @@ public class TradingStationBlockEntity extends BlockEntity implements BlockEntit
     @Override
     public CompoundTag toClientTag(CompoundTag tag) {
         return save(tag);
+    }
+
+    @Override
+    public void containerChanged(Container container) {
+        if (level instanceof ServerLevel) {
+            sync();
+        }
     }
 }
