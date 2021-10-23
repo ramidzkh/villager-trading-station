@@ -1,7 +1,10 @@
 package me.ramidzkh.vts.block;
 
 import com.google.common.base.Predicates;
+import io.github.astrarre.gui.v1.api.server.ServerPanel;
 import me.ramidzkh.vts.VillagerTradingStationFabric;
+import me.ramidzkh.vts.gui.VillagerTradingServerPanel;
+import me.ramidzkh.vts.gui.client.VillagerTradingClientPanel;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
@@ -88,6 +91,12 @@ public class TradingStationBlock extends BaseEntityBlock {
                         transaction.commit();
                         success = true;
                     }
+                    else
+                        ServerPanel.openHandled(
+                                player,
+                                (communication, panel) -> new VillagerTradingClientPanel(communication, panel, tradingStation, player),
+                                (communication, panel) -> new VillagerTradingServerPanel(communication, panel, tradingStation, player)
+                        );
                 }
             }
 

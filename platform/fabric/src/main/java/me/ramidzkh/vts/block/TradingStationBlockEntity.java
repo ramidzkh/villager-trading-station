@@ -54,6 +54,18 @@ public class TradingStationBlockEntity extends BlockEntity implements BlockEntit
         quotes.addListener(this);
     }
 
+    public SimpleContainer getInputContainer() {
+        return inputs;
+    }
+
+    public SimpleContainer getOutputContainer() {
+        return outputs;
+    }
+
+    public SimpleContainer getQuoteContainer() {
+        return quotes;
+    }
+
     public Storage<ItemVariant> getStorage() {
         return exposed;
     }
