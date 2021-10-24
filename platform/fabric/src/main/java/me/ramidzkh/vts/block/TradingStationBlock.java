@@ -1,10 +1,12 @@
 package me.ramidzkh.vts.block;
 
 import com.google.common.base.Predicates;
+import io.github.astrarre.gui.v1.api.component.slot.SlotKey;
 import io.github.astrarre.gui.v1.api.server.ServerPanel;
 import me.ramidzkh.vts.VillagerTradingStationFabric;
 import me.ramidzkh.vts.gui.VillagerTradingServerPanel;
 import me.ramidzkh.vts.gui.client.VillagerTradingClientPanel;
+import me.ramidzkh.vts.util.GuiHelper;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
@@ -31,6 +33,9 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayDeque;
+import java.util.List;
 
 public class TradingStationBlock extends BaseEntityBlock {
 
@@ -91,12 +96,19 @@ public class TradingStationBlock extends BaseEntityBlock {
                         transaction.commit();
                         success = true;
                     }
-                    else
+                    else {
+                        List<SlotKey> inputKey = SlotKey.inv(tradingStation.getInputContainer(), 1),
+                                outputKey = SlotKey.inv(tradingStation.getOutputContainer(), 2),
+                                quoteKey = SlotKey.inv(tradingStation.getQuoteContainer(), 3);
+
+                        ArrayDeque<List<SlotKey>> listKey = GuiHelper.fillDeque(player, inputKey, outputKey, quoteKey);
+
                         ServerPanel.openHandled(
                                 player,
-                                (communication, panel) -> new VillagerTradingClientPanel(communication, panel, tradingStation, player),
-                                (communication, panel) -> new VillagerTradingServerPanel(communication, panel, tradingStation, player)
+                                (communication, panel) -> new VillagerTradingClientPanel(communication, panel, tradingStation, listKey),
+                                (communication, panel) -> new VillagerTradingServerPanel(communication, panel, listKey)
                         );
+                    }
                 }
             }
 

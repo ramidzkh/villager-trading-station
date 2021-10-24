@@ -11,22 +11,15 @@ import io.github.astrarre.rendering.v1.api.plane.icon.backgrounds.ContainerBackg
 import io.github.astrarre.rendering.v1.api.space.Transform3d;
 import me.ramidzkh.vts.block.TradingStationBlockEntity;
 import me.ramidzkh.vts.util.GuiHelper;
-import net.minecraft.world.Container;
-import net.minecraft.world.entity.player.Player;
 
+import java.util.ArrayDeque;
 import java.util.List;
 
 public class VillagerTradingClientPanel {
 
-    public VillagerTradingClientPanel(PacketHandler packetHandler, ARootPanel rootPanel, TradingStationBlockEntity blockEntity, Player player) {
-        Container input = blockEntity.getInputContainer();
-        Container output = blockEntity.getOutputContainer();
-        Container quote = blockEntity.getQuoteContainer();
+    public VillagerTradingClientPanel(PacketHandler packetHandler, ARootPanel rootPanel, TradingStationBlockEntity blockEntity, ArrayDeque<List<SlotKey>> listKey) {
 
-        List<SlotKey> playerKey = SlotKey.player(player, 0);
-        List<SlotKey> inputKey = SlotKey.inv(input, 1);
-        List<SlotKey> outputKey = SlotKey.inv(output, 2);
-        List<SlotKey> quoteKey = SlotKey.inv(quote, 3);
+        List<SlotKey> playerKey = listKey.pollLast(), inputKey = listKey.poll(), outputKey = listKey.poll(), quoteKey = listKey.poll();
 
         ACenteringPanel panel = new ACenteringPanel(rootPanel);
 
@@ -34,7 +27,7 @@ public class VillagerTradingClientPanel {
 
         AGrid inputGrid = GuiHelper.fillGrid(new AGrid(3, 3), packetHandler, rootPanel, inputKey);
         AGrid outputGrid = GuiHelper.fillGrid(new AGrid(3, 3), packetHandler, rootPanel, outputKey);
-        AGrid quoteGrid = GuiHelper.fillGrid(new AGrid(1, quote.getContainerSize()), packetHandler, rootPanel, quoteKey);
+        AGrid quoteGrid = GuiHelper.fillGrid(new AGrid(1, blockEntity.getQuoteContainer().getContainerSize()), packetHandler, rootPanel, quoteKey);
 
         panel.add(inputGrid.with(Transform3d.translate(60, 120, 0)));
         panel.add(outputGrid.with(Transform3d.translate(260, 120, 0)));

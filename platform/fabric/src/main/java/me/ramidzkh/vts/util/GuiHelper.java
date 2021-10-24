@@ -5,6 +5,9 @@ import io.github.astrarre.gui.v1.api.component.AGrid;
 import io.github.astrarre.gui.v1.api.component.ARootPanel;
 import io.github.astrarre.gui.v1.api.component.slot.ASlot;
 import io.github.astrarre.gui.v1.api.component.slot.SlotKey;
+import net.minecraft.world.entity.player.Player;
+
+import java.util.ArrayDeque;
 import java.util.List;
 
 public class GuiHelper {
@@ -17,5 +20,20 @@ public class GuiHelper {
             }
         }
         return grid;
+    }
+
+    @SafeVarargs
+    public static ArrayDeque<List<SlotKey>> fillDeque(Player player, List<SlotKey>... lists) {
+        ArrayDeque<List<SlotKey>> deque = new ArrayDeque<>();
+        List<SlotKey> playerKey = SlotKey.player(player, 0);
+        for (List<SlotKey> key : lists) {
+            playerKey.forEach(k -> k.linkAllPre(key));
+            key.forEach(k -> k.linkAll(playerKey));
+
+            deque.add(key);
+        }
+        deque.add(playerKey);
+
+        return deque;
     }
 }
