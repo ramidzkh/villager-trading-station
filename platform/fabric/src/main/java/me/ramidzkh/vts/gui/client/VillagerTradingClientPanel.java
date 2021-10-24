@@ -36,9 +36,9 @@ public class VillagerTradingClientPanel {
         AGrid outputGrid = GuiHelper.fillGrid(new AGrid(3, 3), packetHandler, rootPanel, outputKey);
         AGrid quoteGrid = GuiHelper.fillGrid(new AGrid(1, quote.getContainerSize()), packetHandler, rootPanel, quoteKey);
 
-        panel.add(inputGrid.with(Transform3d.translate(60, 0, 0)));
-        panel.add(outputGrid.with(Transform3d.translate(260, 0, 0)));
-        panel.add(quoteGrid.with(Transform3d.translate(10, 0, 0)));
+        panel.add(inputGrid.with(Transform3d.translate(60, 120, 0)));
+        panel.add(outputGrid.with(Transform3d.translate(260, 120, 0)));
+        panel.add(quoteGrid.with(Transform3d.translate(10, 120, 0)));
 
         rootPanel.add(ASlot.playerInv(packetHandler, rootPanel, playerKey));
     }
