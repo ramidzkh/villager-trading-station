@@ -102,6 +102,7 @@ public class TradingStationBlock extends BaseEntityBlock {
                                 quoteKey = SlotKey.inv(tradingStation.getQuoteContainer(), 3);
 
                         ArrayDeque<List<SlotKey>> listKey = GuiHelper.fillDeque(player, inputKey, outputKey, quoteKey);
+                        System.out.println(level.isClientSide + " " + listKey);
 
                         ServerPanel.openHandled(
                                 player,

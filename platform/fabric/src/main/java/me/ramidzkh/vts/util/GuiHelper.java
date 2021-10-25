@@ -15,7 +15,7 @@ public class GuiHelper {
     public static AGrid fillGrid(AGrid grid, PacketHandler communication, ARootPanel panel, List<SlotKey> key) {
         for(int row = 0; row < grid.cellsY; row++) {
             for(int column = 0; column < grid.cellsX; column++) {
-                int index = grid.cellsX + (row * grid.cellsX) + column;
+                int index = (grid.cellsX * row) + column;
                 grid.add(new ASlot(communication, panel, key.get(index)));
             }
         }
