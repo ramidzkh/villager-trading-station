@@ -71,6 +71,7 @@ public class TradingStationBlock extends BaseEntityBlock {
         return Shapes.empty();
     }
 
+    boolean toggle;
     @Override
     public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
         boolean success = false;
@@ -97,18 +98,19 @@ public class TradingStationBlock extends BaseEntityBlock {
                         success = true;
                     }
                     else {
-                        List<SlotKey> inputKey = SlotKey.inv(tradingStation.getInputContainer(), 1),
-                                outputKey = SlotKey.inv(tradingStation.getOutputContainer(), 2),
-                                quoteKey = SlotKey.inv(tradingStation.getQuoteContainer(), 3);
+                        if(toggle ^ level.isClientSide) {
+                            toggle ^= true;
 
-                        ArrayDeque<List<SlotKey>> listKey = GuiHelper.fillDeque(player, inputKey, outputKey, quoteKey);
-                        System.out.println(level.isClientSide + " " + listKey);
+                            List<SlotKey> inputKey = SlotKey.inv(tradingStation.getInputContainer(), 1), outputKey = SlotKey.inv(tradingStation.getOutputContainer(),
+                                    2), quoteKey = SlotKey.inv(tradingStation.getQuoteContainer(), 3);
 
-                        ServerPanel.openHandled(
-                                player,
-                                (communication, panel) -> new VillagerTradingClientPanel(communication, panel, tradingStation, listKey),
-                                (communication, panel) -> new VillagerTradingServerPanel(communication, panel, listKey)
-                        );
+                            ArrayDeque<List<SlotKey>> listKey = GuiHelper.fillDeque(player, inputKey, outputKey, quoteKey);
+                            System.out.println(level.isClientSide);
+
+                            ServerPanel.openHandled(player,
+                                    (communication, panel) -> new VillagerTradingClientPanel(communication, panel, tradingStation, listKey),
+                                    (communication, panel) -> new VillagerTradingServerPanel(communication, panel, listKey));
+                        }
                     }
                 }
             }
