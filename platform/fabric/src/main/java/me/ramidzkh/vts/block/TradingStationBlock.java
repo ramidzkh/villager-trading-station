@@ -35,6 +35,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TradingStationBlock extends BaseEntityBlock {
@@ -46,98 +47,10 @@ public class TradingStationBlock extends BaseEntityBlock {
         SHAPES[Direction.Axis.Z.ordinal()] = rotateShape(Direction.NORTH, Direction.WEST, makeShape());
     }
 
+    boolean toggle;
+
     public TradingStationBlock(Properties properties) {
         super(properties);
-    }
-
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(BlockStateProperties.HORIZONTAL_AXIS);
-    }
-
-    @Nullable
-    @Override
-    public BlockState getStateForPlacement(BlockPlaceContext blockPlaceContext) {
-        return defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_AXIS, blockPlaceContext.getHorizontalDirection().getAxis());
-    }
-
-    @Override
-    public VoxelShape getShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CollisionContext collisionContext) {
-        return SHAPES[blockState.getValue(BlockStateProperties.HORIZONTAL_AXIS).ordinal()];
-    }
-
-    @Override
-    public VoxelShape getOcclusionShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
-        return Shapes.empty();
-    }
-
-    boolean toggle;
-    @Override
-    public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
-        boolean success = false;
-
-        if (level.getBlockEntity(blockPos) instanceof TradingStationBlockEntity tradingStation) {
-            if (player.isShiftKeyDown()) {
-                try (Transaction transaction = Transaction.openOuter()) {
-                    success = StorageUtil.move(tradingStation.getQuotes(), PlayerInventoryStorage.of(player), Predicates.alwaysTrue(), 1, transaction) == 1;
-
-                    if (success) {
-                        transaction.commit();
-                    }
-                }
-            } else {
-                ItemStack hand = player.getItemInHand(interactionHand);
-
-                try (Transaction transaction = Transaction.openOuter()) {
-                    if (tradingStation.getQuotes().insert(ItemVariant.of(hand), 1, transaction) == 1) {
-                        if (!player.getAbilities().instabuild) {
-                            hand.shrink(1);
-                        }
-
-                        transaction.commit();
-                        success = true;
-                    }
-                    else {
-                        if(toggle ^ level.isClientSide) {
-                            toggle ^= true;
-
-                            List<SlotKey> inputKey = SlotKey.inv(tradingStation.getInputContainer(), 1), outputKey = SlotKey.inv(tradingStation.getOutputContainer(),
-                                    2), quoteKey = SlotKey.inv(tradingStation.getQuoteContainer(), 3);
-
-                            ArrayDeque<List<SlotKey>> listKey = GuiHelper.fillDeque(player, inputKey, outputKey, quoteKey);
-                            System.out.println(level.isClientSide);
-
-                            ServerPanel.openHandled(player,
-                                    (communication, panel) -> new VillagerTradingClientPanel(communication, panel, tradingStation, listKey),
-                                    (communication, panel) -> new VillagerTradingServerPanel(communication, panel, listKey));
-                        }
-                    }
-                }
-            }
-
-        }
-
-        return success ? InteractionResult.SUCCESS : InteractionResult.PASS;
-    }
-
-    @Override
-    public void onRemove(BlockState blockState, Level level, BlockPos blockPos, BlockState blockState2, boolean bl) {
-        if (level.getBlockEntity(blockPos) instanceof TradingStationBlockEntity tradingStation) {
-            tradingStation.drop(level, blockPos);
-        }
-
-        super.onRemove(blockState, level, blockPos, blockState2, bl);
-    }
-
-    @Override
-    public RenderShape getRenderShape(BlockState blockState) {
-        return RenderShape.MODEL;
-    }
-
-    @Nullable
-    @Override
-    public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return VillagerTradingStationFabric.BlockEntities.TRADING_STATION.create(blockPos, blockState);
     }
 
     public static VoxelShape makeShape() {
@@ -169,5 +82,104 @@ public class TradingStationBlock extends BaseEntityBlock {
         }
 
         return buffer[0];
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(BlockStateProperties.HORIZONTAL_AXIS);
+    }
+
+    @Nullable
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext blockPlaceContext) {
+        return defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_AXIS, blockPlaceContext.getHorizontalDirection().getAxis());
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CollisionContext collisionContext) {
+        return SHAPES[blockState.getValue(BlockStateProperties.HORIZONTAL_AXIS).ordinal()];
+    }
+
+    @Override
+    public VoxelShape getOcclusionShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
+        return Shapes.empty();
+    }
+
+    @Override
+    public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
+        boolean success = false;
+
+        if (level.getBlockEntity(blockPos) instanceof TradingStationBlockEntity tradingStation) {
+            if (player.isShiftKeyDown()) {
+                try (Transaction transaction = Transaction.openOuter()) {
+                    success = StorageUtil.move(tradingStation.getQuotes(), PlayerInventoryStorage.of(player), Predicates.alwaysTrue(), 1, transaction) == 1;
+
+                    if (success) {
+                        transaction.commit();
+                    }
+                }
+            } else {
+                ItemStack hand = player.getItemInHand(interactionHand);
+
+                try (Transaction transaction = Transaction.openOuter()) {
+                    if (tradingStation.getQuotes().insert(ItemVariant.of(hand), 1, transaction) == 1) {
+                        if (!player.getAbilities().instabuild) {
+                            hand.shrink(1);
+                        }
+
+                        transaction.commit();
+                        success = true;
+                    } else {
+                        List<SlotKey> playerKey = SlotKey.player(player, 0), quoteKey = SlotKey.inv(tradingStation.getQuoteContainer(), 1), inputKey = SlotKey.inv(tradingStation.getInputContainer(), 2), outputKey = SlotKey.inv(tradingStation.getOutputContainer(),
+                                3);
+
+                        playerKey.forEach(k -> k.linkAllPre(quoteKey));
+                        quoteKey.forEach(k -> k.linkAll(playerKey));
+
+                        playerKey.forEach(k -> k.linkAllPre(inputKey));
+                        inputKey.forEach(k -> k.linkAll(playerKey));
+
+                        outputKey.forEach(k -> k.linkAll(playerKey));
+                        playerKey.forEach(k -> k.linkAll(outputKey));
+
+                        ArrayList<List<SlotKey>> listKey = new ArrayList<>();
+                        listKey.add(playerKey);
+                        listKey.add(inputKey);
+                        listKey.add(outputKey);
+                        listKey.add(quoteKey);
+
+                        System.out.println(level.isClientSide);
+
+                        ServerPanel.openHandled(player,
+                                (communication, panel) -> new VillagerTradingClientPanel(communication, panel, tradingStation, listKey),
+                                (communication, panel) -> new VillagerTradingServerPanel(communication, panel, listKey));
+                        return InteractionResult.CONSUME;
+                    }
+                }
+            }
+
+        }
+
+        return success ? InteractionResult.SUCCESS : InteractionResult.PASS;
+    }
+
+    @Override
+    public void onRemove(BlockState blockState, Level level, BlockPos blockPos, BlockState blockState2, boolean bl) {
+        if (level.getBlockEntity(blockPos) instanceof TradingStationBlockEntity tradingStation) {
+            tradingStation.drop(level, blockPos);
+        }
+
+        super.onRemove(blockState, level, blockPos, blockState2, bl);
+    }
+
+    @Override
+    public RenderShape getRenderShape(BlockState blockState) {
+        return RenderShape.MODEL;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
+        return VillagerTradingStationFabric.BlockEntities.TRADING_STATION.create(blockPos, blockState);
     }
 }

@@ -24,7 +24,7 @@ dependencies {
     modApi("net.fabricmc.fabric-api", "fabric-api", "0.41.0+1.17")
     modApi("dev.architectury", "architectury-fabric", "2.5.32")
 
-    include(modImplementation("io.github.astrarre", "astrarre-gui-v1-fabric", "1.12.10"))
+    include(modImplementation("io.github.astrarre", "astrarre-gui-v1-fabric", "1.12.12"))
     include("io.github.astrarre", "astrarre-access-v0-fabric", "1.8.3")
     include("io.github.astrarre", "astrarre-util-v0-fabric", "1.2.1")
     include("io.github.astrarre", "astrarre-rendering-v1-fabric", "1.2.3")
