@@ -9,10 +9,27 @@ architectury {
     fabric()
 }
 
+repositories {
+    maven {
+        url = uri("https://storage.googleapis.com/devan-maven/")
+    }
+}
+
+loom {
+    accessWidenerPath.fileValue(file("src/main/resources/vts.accesswidener"))
+}
+
 dependencies {
-    modImplementation("net.fabricmc", "fabric-loader", "0.12.2")
+    modImplementation("net.fabricmc", "fabric-loader", "0.12.3")
     modApi("net.fabricmc.fabric-api", "fabric-api", "0.41.0+1.17")
     modApi("dev.architectury", "architectury-fabric", "2.5.32")
+
+    include(modImplementation("io.github.astrarre", "astrarre-gui-v1-fabric", "1.12.12"))
+    include("io.github.astrarre", "astrarre-access-v0-fabric", "1.8.3")
+    include("io.github.astrarre", "astrarre-util-v0-fabric", "1.2.1")
+    include("io.github.astrarre", "astrarre-rendering-v1-fabric", "1.2.3")
+    include("io.github.astrarre", "astrarre-itemview-v0-fabric", "1.2.3")
+    include("io.github.astrarre", "astrarre-hash-v0-fabric", "1.2.3")
 
     implementation(project(":common", "dev")) {
         isTransitive = false

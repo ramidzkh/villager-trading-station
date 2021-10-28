@@ -13,10 +13,7 @@ import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.Container;
-import net.minecraft.world.ContainerListener;
-import net.minecraft.world.Containers;
-import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.*;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.trading.MerchantOffer;
@@ -52,6 +49,18 @@ public class TradingStationBlockEntity extends BlockEntity implements BlockEntit
         inputs.addListener(this);
         outputs.addListener(this);
         quotes.addListener(this);
+    }
+
+    public SimpleContainer getInputContainer() {
+        return inputs;
+    }
+
+    public SimpleContainer getOutputContainer() {
+        return outputs;
+    }
+
+    public SimpleContainer getQuoteContainer() {
+        return quotes;
     }
 
     public Storage<ItemVariant> getStorage() {
@@ -137,7 +146,7 @@ public class TradingStationBlockEntity extends BlockEntity implements BlockEntit
 
     @Override
     public void containerChanged(Container container) {
-        if (level instanceof ServerLevel) {
+        if (!level.isClientSide) {
             sync();
         }
     }

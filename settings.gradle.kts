@@ -26,7 +26,7 @@ pluginManagement {
     }
 }
 
-include("common", "fabric", "forge")
+include("common", "fabric")
 
 for (project in rootProject.children) {
     project.projectDir = file("platform/${project.name}")
