@@ -2,12 +2,14 @@ package me.ramidzkh.vts.util;
 
 import io.github.astrarre.gui.v1.api.comms.PacketHandler;
 import io.github.astrarre.gui.v1.api.component.AGrid;
+import io.github.astrarre.gui.v1.api.component.AList;
 import io.github.astrarre.gui.v1.api.component.ARootPanel;
 import io.github.astrarre.gui.v1.api.component.slot.ASlot;
 import io.github.astrarre.gui.v1.api.component.slot.SlotKey;
-import net.minecraft.world.entity.player.Player;
+import io.github.astrarre.rendering.v1.api.plane.icon.Icon;
+import me.ramidzkh.vts.gui.QuoteIcon;
+import net.minecraft.world.item.Items;
 
-import java.util.ArrayDeque;
 import java.util.List;
 
 public class GuiHelper {
@@ -22,18 +24,10 @@ public class GuiHelper {
         return grid;
     }
 
-    @SafeVarargs
-    public static ArrayDeque<List<SlotKey>> fillDeque(Player player, List<SlotKey>... lists) {
-        ArrayDeque<List<SlotKey>> deque = new ArrayDeque<>();
-        List<SlotKey> playerKey = SlotKey.player(player, 0);
-        for (List<SlotKey> key : lists) {
-            playerKey.forEach(k -> k.linkAllPre(key));
-            key.forEach(k -> k.linkAll(playerKey));
-
-            deque.add(key);
+    public static AList fillList(AList list, PacketHandler communication, ARootPanel panel, List<SlotKey> key) {
+        for(int i = 0; i < key.size(); i++) {
+            list.add(new ASlot(communication, panel, key.get(i)).setIcon(new QuoteIcon(18, 18, Icon.item(Items.PAPER).offset(1, 1))));
         }
-        deque.add(playerKey);
-
-        return deque;
+        return list;
     }
 }

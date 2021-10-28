@@ -1,8 +1,16 @@
 package me.ramidzkh.vts.block;
 
 import com.google.common.base.Predicates;
+import io.github.astrarre.gui.v1.api.component.ACenteringPanel;
+import io.github.astrarre.gui.v1.api.component.AGrid;
+import io.github.astrarre.gui.v1.api.component.AIcon;
+import io.github.astrarre.gui.v1.api.component.AList;
+import io.github.astrarre.gui.v1.api.component.slot.ASlot;
 import io.github.astrarre.gui.v1.api.component.slot.SlotKey;
 import io.github.astrarre.gui.v1.api.server.ServerPanel;
+import io.github.astrarre.rendering.v1.api.plane.icon.backgrounds.ContainerBackgroundIcon;
+import io.github.astrarre.rendering.v1.api.space.Transform3d;
+import io.github.astrarre.rendering.v1.api.util.Axis2d;
 import me.ramidzkh.vts.VillagerTradingStationFabric;
 import me.ramidzkh.vts.gui.VillagerTradingServerPanel;
 import me.ramidzkh.vts.gui.client.VillagerTradingClientPanel;
@@ -151,7 +159,7 @@ public class TradingStationBlock extends BaseEntityBlock {
                         System.out.println(level.isClientSide);
 
                         ServerPanel.openHandled(player,
-                                (communication, panel) -> new VillagerTradingClientPanel(communication, panel, tradingStation, listKey),
+                                (communication, panel) -> new VillagerTradingClientPanel(communication, panel, listKey),
                                 (communication, panel) -> new VillagerTradingServerPanel(communication, panel, listKey));
                         return InteractionResult.CONSUME;
                     }
