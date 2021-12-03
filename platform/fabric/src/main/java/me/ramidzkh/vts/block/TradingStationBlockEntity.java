@@ -2,7 +2,6 @@ package me.ramidzkh.vts.block;
 
 import me.ramidzkh.vts.VillagerTradingStationFabric;
 import me.ramidzkh.vts.item.QuoteItem;
-import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
@@ -12,6 +11,9 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerListener;
@@ -24,10 +26,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class TradingStationBlockEntity extends BlockEntity implements BlockEntityClientSerializable, ContainerListener {
+public class TradingStationBlockEntity extends BlockEntity implements ContainerListener {
 
     private final SimpleContainer inputs = new SimpleContainer(9);
     private final SimpleContainer outputs = new SimpleContainer(9);
@@ -80,9 +83,9 @@ public class TradingStationBlockEntity extends BlockEntity implements BlockEntit
 
                 // MerchantOffer#satisfiedBy but exact amounts
                 if (ItemStack.isSame(offer.getResult(), quote.result())
-                    && offer.satisfiedBy(quote.a(), quote.b())
-                    && offer.getCostA().getCount() == quote.a().getCount()
-                    && offer.getCostB().getCount() == quote.b().getCount()) {
+                        && offer.satisfiedBy(quote.a(), quote.b())
+                        && offer.getCostA().getCount() == quote.a().getCount()
+                        && offer.getCostB().getCount() == quote.b().getCount()) {
                     myOffer = offer;
                     break;
                 }
@@ -91,8 +94,8 @@ public class TradingStationBlockEntity extends BlockEntity implements BlockEntit
             if (myOffer != null) {
                 try (Transaction transaction = Transaction.openOuter()) {
                     if (inputStorage.extract(ItemVariant.of(quote.a()), quote.a().getCount(), transaction) == quote.a().getCount()
-                        && (quote.b().isEmpty() || inputStorage.extract(ItemVariant.of(quote.b()), quote.b().getCount(), transaction) == quote.b().getCount())
-                        && outputStorage.insert(ItemVariant.of(quote.result()), quote.result().getCount(), transaction) == quote.result().getCount()) {
+                            && (quote.b().isEmpty() || inputStorage.extract(ItemVariant.of(quote.b()), quote.b().getCount(), transaction) == quote.b().getCount())
+                            && outputStorage.insert(ItemVariant.of(quote.result()), quote.result().getCount(), transaction) == quote.result().getCount()) {
                         villager.notifyTrade(myOffer);
                         transaction.commit();
                     }
@@ -118,9 +121,9 @@ public class TradingStationBlockEntity extends BlockEntity implements BlockEntit
 
                 // MerchantOffer#satisfiedBy but exact amounts
                 if (ItemStack.isSame(offer.getResult(), quote.result())
-                    && offer.satisfiedBy(quote.a(), quote.b())
-                    && offer.getCostA().getCount() == quote.a().getCount()
-                    && offer.getCostB().getCount() == quote.b().getCount()) {
+                        && offer.satisfiedBy(quote.a(), quote.b())
+                        && offer.getCostA().getCount() == quote.a().getCount()
+                        && offer.getCostB().getCount() == quote.b().getCount()) {
                     return true;
                 }
             }
@@ -145,28 +148,29 @@ public class TradingStationBlockEntity extends BlockEntity implements BlockEntit
     }
 
     @Override
-    public CompoundTag save(CompoundTag compoundTag) {
+    protected void saveAdditional(CompoundTag compoundTag) {
         compoundTag.put("Inputs", inputs.createTag());
         compoundTag.put("Outputs", outputs.createTag());
         compoundTag.put("Quotes", quotes.createTag());
+    }
 
-        return super.save(compoundTag);
+    @Nullable
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override
-    public void fromClientTag(CompoundTag tag) {
-        load(tag);
-    }
-
-    @Override
-    public CompoundTag toClientTag(CompoundTag tag) {
-        return save(tag);
+    public CompoundTag getUpdateTag() {
+        CompoundTag nbt = super.getUpdateTag();
+        saveAdditional(nbt);
+        return nbt;
     }
 
     @Override
     public void containerChanged(Container container) {
-        if (level instanceof ServerLevel) {
-            sync();
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.getChunkSource().blockChanged(getBlockPos());
         }
     }
 }

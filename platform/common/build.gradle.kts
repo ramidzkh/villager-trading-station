@@ -3,8 +3,8 @@ architectury {
 }
 
 dependencies {
-    modImplementation("net.fabricmc", "fabric-loader", "0.12.2")
-    modApi("dev.architectury", "architectury", "2.5.32")
+    modImplementation("net.fabricmc", "fabric-loader", "0.12.7")
+    modApi("dev.architectury", "architectury", "3.1.45")
 }
 
 val dev by configurations.registering

@@ -2,22 +2,31 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
-val shadowCommon by configurations.registering
-
 architectury {
     platformSetupLoomIde()
     forge()
 }
 
-dependencies {
-    forge("net.minecraftforge", "forge", "1.17.1-37.0.103")
-    modApi("dev.architectury", "architectury-forge", "2.5.32")
+val common by configurations.registering
+val shadowCommon by configurations.registering
 
-    implementation(project(":common", "dev")) {
-        isTransitive = false
+configurations {
+    compileClasspath {
+        extendsFrom(common.get())
     }
 
-    "developmentForge"(project(":common", "dev")) {
+    runtimeClasspath {
+        extendsFrom(common.get())
+    }
+
+    getByName("developmentForge").extendsFrom(common.get())
+}
+
+dependencies {
+    forge("net.minecraftforge", "forge", "1.18-38.0.12")
+    modApi("dev.architectury", "architectury-forge", "3.1.45")
+
+    "common"(project(path = ":common", configuration = "dev")) {
         isTransitive = false
     }
 
@@ -45,7 +54,7 @@ tasks {
     remapJar {
         input.set(shadowJar.get().archiveFile)
         dependsOn(shadowJar)
-        archiveClassifier.set("forge")
+        archiveClassifier.set(null as String?)
     }
 
     jar {
@@ -56,5 +65,11 @@ tasks {
         val commonSources = project(":common").tasks.sourcesJar
         dependsOn(commonSources)
         from(commonSources.get().archiveFile.map { zipTree(it) })
+    }
+}
+
+components.getByName<AdhocComponentWithVariants>("java") {
+    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements.get()) {
+        skip()
     }
 }
