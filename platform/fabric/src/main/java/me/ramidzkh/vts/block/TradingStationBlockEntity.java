@@ -101,6 +101,34 @@ public class TradingStationBlockEntity extends BlockEntity implements BlockEntit
         }
     }
 
+    public boolean canInteract(AbstractVillager villager) {
+        for (int i = 0; i < quotes.getContainerSize(); i++) {
+            ItemStack stack = quotes.getItem(i);
+
+            if (!(stack.getItem() instanceof QuoteItem quoteItem)) {
+                continue;
+            }
+
+            QuoteItem.Quote quote = quoteItem.getQuote(stack);
+
+            for (MerchantOffer offer : villager.getOffers()) {
+                if (offer.isOutOfStock()) {
+                    continue;
+                }
+
+                // MerchantOffer#satisfiedBy but exact amounts
+                if (ItemStack.isSame(offer.getResult(), quote.result())
+                    && offer.satisfiedBy(quote.a(), quote.b())
+                    && offer.getCostA().getCount() == quote.a().getCount()
+                    && offer.getCostB().getCount() == quote.b().getCount()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     public void drop(Level level, BlockPos blockPos) {
         Containers.dropContents(level, blockPos, inputs);
         Containers.dropContents(level, blockPos, outputs);
