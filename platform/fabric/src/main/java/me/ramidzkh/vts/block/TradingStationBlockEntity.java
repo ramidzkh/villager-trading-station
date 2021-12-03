@@ -45,8 +45,8 @@ public class TradingStationBlockEntity extends BlockEntity implements ContainerL
         }
     };
     private final Storage<ItemVariant> exposed = new CombinedStorage<>(List.of(
-            new OneWayStorage<>(inputStorage, true, false),
-            new OneWayStorage<>(outputStorage, false, true)
+            FilteringStorage.insertOnlyOf(inputStorage),
+            FilteringStorage.extractOnlyOf(outputStorage)
     ));
 
     public TradingStationBlockEntity(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
