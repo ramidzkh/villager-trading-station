@@ -146,8 +146,8 @@ public class TradingStationBlockEntity extends BlockEntity implements BlockEntit
 
     @Override
     public void containerChanged(Container container) {
-        if (!level.isClientSide) {
-            sync();
+        if (level instanceof ServerLevel) {
+            setChanged();
         }
     }
 }

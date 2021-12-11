@@ -156,8 +156,6 @@ public class TradingStationBlock extends BaseEntityBlock {
                         listKey.add(outputKey);
                         listKey.add(quoteKey);
 
-                        System.out.println(level.isClientSide);
-
                         ServerPanel.openHandled(player,
                                 (communication, panel) -> new VillagerTradingClientPanel(communication, panel, listKey),
                                 (communication, panel) -> new VillagerTradingServerPanel(communication, panel, listKey));
