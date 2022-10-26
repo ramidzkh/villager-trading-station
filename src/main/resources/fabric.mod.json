@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "villager-trading-station",
+  "version": "${version}",
+  "mixins": ["villager-trading-station.mixins.json"],
+  "entrypoints": {
+    "main": ["me.ramidzkh.vts.VillagerTradingStation::initialize"],
+    "client": ["me.ramidzkh.vts.VillagerTradingStationClient::initialize"],
+    "fabric-datagen": [
+      "me.ramidzkh.vts.data.VillagerTradingStationDataGenerator"
+    ]
+  },
+  "name": "Villager Trading Station",
+  "description": "Automated villager trading",
+  "authors": ["ramidzkh", "ueaj"],
+  "license": ["LGPL-3.0-or-later"]
+}

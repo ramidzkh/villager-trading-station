@@ -1,0 +1,114 @@
+package me.ramidzkh.vts;
+
+import me.ramidzkh.vts.block.MerchantScreenHandler;
+import me.ramidzkh.vts.block.TradingStationBlock;
+import me.ramidzkh.vts.block.TradingStationBlockEntity;
+import me.ramidzkh.vts.item.QuoteItem;
+import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
+import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.npc.AbstractVillager;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.material.Material;
+
+import static net.minecraft.commands.Commands.argument;
+import static net.minecraft.commands.Commands.literal;
+
+public interface VillagerTradingStation {
+
+    String MOD_ID = "villager-trading-station";
+
+    static ResourceLocation id(String path) {
+        return new ResourceLocation(MOD_ID, path);
+    }
+
+    ResourceLocation TRADING_STATION = id("trading_station");
+    ResourceLocation INSCRIBE_QUOTE = id("inscribe_quote");
+
+    Block TRADING_STATION_BLOCK = new TradingStationBlock(
+            FabricBlockSettings.of(Material.WOOD).strength(0.2F, 2.5F).requiresTool());
+
+    BlockEntityType<TradingStationBlockEntity> TRADING_STATION_BLOCK_ENTITY = FabricBlockEntityTypeBuilder
+            .create((pos, state) -> {
+                return new TradingStationBlockEntity(VillagerTradingStation.TRADING_STATION_BLOCK_ENTITY, pos, state);
+            }, TRADING_STATION_BLOCK).build();
+
+    Item QUOTE_ITEM = new QuoteItem(new Item.Properties().stacksTo(1));
+
+    CreativeModeTab TAB = FabricItemGroupBuilder.build(id("tab"),
+            () -> new ItemStack(VillagerTradingStation.TRADING_STATION_ITEM));
+    Item TRADING_STATION_ITEM = new BlockItem(TRADING_STATION_BLOCK, new Item.Properties().tab(TAB));
+
+    TagKey<Item> QUOTE_CONVERTABLE = TagKey.create(Registry.ITEM_REGISTRY, id("quote_convertable"));
+
+    static void initialize() {
+        Registry.register(Registry.BLOCK, VillagerTradingStation.TRADING_STATION, TRADING_STATION_BLOCK);
+        Registry.register(Registry.BLOCK_ENTITY_TYPE, TRADING_STATION, TRADING_STATION_BLOCK_ENTITY);
+
+        // TODO: Replace with SidedStorageBlockEntity for 1.19
+        ItemStorage.SIDED.registerForBlockEntity((tradingStationBlock, direction) -> tradingStationBlock.getStorage(),
+                TRADING_STATION_BLOCK_ENTITY);
+
+        Registry.register(Registry.ITEM, id("quote"), QUOTE_ITEM);
+        Registry.register(Registry.ITEM, TRADING_STATION, TRADING_STATION_ITEM);
+
+        ServerPlayNetworking.registerGlobalReceiver(VillagerTradingStation.INSCRIBE_QUOTE,
+                MerchantScreenHandler::onInscribeQuote);
+
+        // spotless:off
+        CommandRegistrationCallback.EVENT.register
+((      dispatcher
+,       dedicated
+)->     dispatcher
+.       register
+(       literal
+(       "testing"
+).      then
+(       argument
+(       "pos"
+,       BlockPosArgument
+.       blockPos
+()).    then
+(       argument
+(       "villager"
+,       EntityArgument
+.       entity
+()).    executes
+(       context
+->{     var pos
+=       BlockPosArgument
+.       getLoadedBlockPos
+(       context
+,       "pos"
+);      var villager
+=       EntityArgument
+.       getEntity
+(       context,
+        "villager"
+);((    TradingStationBlockEntity
+)       context
+.       getSource
+().     getLevel
+().     getBlockEntity
+(       pos
+)).     interact
+(                                                                                                                                                                                                               (AbstractVillager)
+        villager
+);      return 1
+;})))));
+        // spotless:on
+    }
+}
