@@ -35,6 +35,6 @@ public class ModelProvider extends FabricModelProvider {
 
     @Override
     public void generateItemModels(ItemModelGenerators generator) {
-        generator.generateFlatItem(VillagerTradingStation.QUOTE_ITEM, Items.PAPER, ModelTemplates.FLAT_ITEM);
+        generator.generateFlatItem(VillagerTradingStation.QUOTE_ITEM, ModelTemplates.FLAT_ITEM);
     }
 }
