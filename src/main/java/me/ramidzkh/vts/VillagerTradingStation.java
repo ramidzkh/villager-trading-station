@@ -1,9 +1,12 @@
 package me.ramidzkh.vts;
 
+import me.ramidzkh.vts.ai.TradingStationSensor;
 import me.ramidzkh.vts.block.MerchantScreenHandler;
 import me.ramidzkh.vts.block.TradingStationBlock;
 import me.ramidzkh.vts.block.TradingStationBlockEntity;
 import me.ramidzkh.vts.item.QuoteItem;
+import me.ramidzkh.vts.mixins.MemoryModuleTypeAccessor;
+import me.ramidzkh.vts.mixins.SensorTypeAccessor;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -12,9 +15,12 @@ import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityT
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -23,6 +29,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.Material;
+
+import java.util.List;
+import java.util.Optional;
 
 import static net.minecraft.commands.Commands.argument;
 import static net.minecraft.commands.Commands.literal;
@@ -54,6 +63,9 @@ public interface VillagerTradingStation {
 
     TagKey<Item> QUOTE_CONVERTABLE = TagKey.create(Registry.ITEM_REGISTRY, id("quote_convertable"));
 
+    MemoryModuleType<List<GlobalPos>> STATION_SITE = MemoryModuleTypeAccessor.create(Optional.empty());
+    SensorType<TradingStationSensor> STATION_SENSOR = SensorTypeAccessor.create(TradingStationSensor::new);
+
     static void initialize() {
         Registry.register(Registry.BLOCK, VillagerTradingStation.TRADING_STATION, TRADING_STATION_BLOCK);
         Registry.register(Registry.BLOCK_ENTITY_TYPE, TRADING_STATION, TRADING_STATION_BLOCK_ENTITY);
@@ -64,6 +76,9 @@ public interface VillagerTradingStation {
 
         Registry.register(Registry.ITEM, id("quote"), QUOTE_ITEM);
         Registry.register(Registry.ITEM, TRADING_STATION, TRADING_STATION_ITEM);
+
+        Registry.register(Registry.MEMORY_MODULE_TYPE, TRADING_STATION, STATION_SITE);
+        Registry.register(Registry.SENSOR_TYPE, TRADING_STATION, STATION_SENSOR);
 
         ServerPlayNetworking.registerGlobalReceiver(VillagerTradingStation.INSCRIBE_QUOTE,
                 MerchantScreenHandler::onInscribeQuote);

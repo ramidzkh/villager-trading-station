@@ -22,7 +22,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -33,8 +32,20 @@ public class TradingStationBlock extends BaseEntityBlock {
     private static final VoxelShape[] SHAPES = new VoxelShape[3];
 
     static {
-        SHAPES[Direction.Axis.X.ordinal()] = makeShape();
-        SHAPES[Direction.Axis.Z.ordinal()] = rotateShape(Direction.NORTH, Direction.WEST, makeShape());
+        var shape = SHAPES[Direction.Axis.X.ordinal()] = Shapes.or(
+                Shapes.box(0.4375, 0.21875, 0.4375, 0.5625, 0.84375, 0.5625),
+                Shapes.box(0.0625, 0, 0.0625, 0.9375, 0.0625, 0.9375),
+                Shapes.box(0.421875, 0.9375, 0.21875, 0.578125, 1, 0.78125),
+                Shapes.box(0.1875, 0.59375, 0.84375, 0.8125, 0.65625, 0.90625),
+                Shapes.box(0.15625, 0.34375, 0.84375, 0.21875, 0.59375, 0.90625),
+                Shapes.box(0.78125, 0.34375, 0.84375, 0.84375, 0.59375, 0.90625),
+                Shapes.box(0.15625, 0.28125, 0.71875, 0.84375, 0.34375, 1.03125),
+                Shapes.box(0.25, 0.0625, 0.25, 0.75, 0.125, 0.75),
+                Shapes.box(0.1875, 0.59375, 0.09375, 0.8125, 0.65625, 0.15625),
+                Shapes.box(0.15625, 0.34375, 0.09375, 0.21875, 0.59375, 0.15625),
+                Shapes.box(0.78125, 0.34375, 0.09375, 0.84375, 0.59375, 0.15625),
+                Shapes.box(0.15625, 0.28125, -0.03125, 0.84375, 0.34375, 0.28125));
+        SHAPES[Direction.Axis.Z.ordinal()] = rotateShape(Direction.NORTH, Direction.WEST, shape);
     }
 
     public TradingStationBlock(Properties properties) {
@@ -117,24 +128,6 @@ public class TradingStationBlock extends BaseEntityBlock {
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
         return VillagerTradingStation.TRADING_STATION_BLOCK_ENTITY.create(blockPos, blockState);
-    }
-
-    public static VoxelShape makeShape() {
-        var shape = Shapes.empty();
-        shape = Shapes.join(shape, Shapes.box(0.4375, 0.21875, 0.4375, 0.5625, 0.84375, 0.5625), BooleanOp.OR);
-        shape = Shapes.join(shape, Shapes.box(0.0625, 0, 0.0625, 0.9375, 0.0625, 0.9375), BooleanOp.OR);
-        shape = Shapes.join(shape, Shapes.box(0.421875, 0.9375, 0.21875, 0.578125, 1, 0.78125), BooleanOp.OR);
-        shape = Shapes.join(shape, Shapes.box(0.1875, 0.59375, 0.84375, 0.8125, 0.65625, 0.90625), BooleanOp.OR);
-        shape = Shapes.join(shape, Shapes.box(0.15625, 0.34375, 0.84375, 0.21875, 0.59375, 0.90625), BooleanOp.OR);
-        shape = Shapes.join(shape, Shapes.box(0.78125, 0.34375, 0.84375, 0.84375, 0.59375, 0.90625), BooleanOp.OR);
-        shape = Shapes.join(shape, Shapes.box(0.15625, 0.28125, 0.71875, 0.84375, 0.34375, 1.03125), BooleanOp.OR);
-        shape = Shapes.join(shape, Shapes.box(0.25, 0.0625, 0.25, 0.75, 0.125, 0.75), BooleanOp.OR);
-        shape = Shapes.join(shape, Shapes.box(0.1875, 0.59375, 0.09375, 0.8125, 0.65625, 0.15625), BooleanOp.OR);
-        shape = Shapes.join(shape, Shapes.box(0.15625, 0.34375, 0.09375, 0.21875, 0.59375, 0.15625), BooleanOp.OR);
-        shape = Shapes.join(shape, Shapes.box(0.78125, 0.34375, 0.09375, 0.84375, 0.59375, 0.15625), BooleanOp.OR);
-        shape = Shapes.join(shape, Shapes.box(0.15625, 0.28125, -0.03125, 0.84375, 0.34375, 0.28125), BooleanOp.OR);
-
-        return shape;
     }
 
     public static VoxelShape rotateShape(Direction from, Direction to, VoxelShape shape) {

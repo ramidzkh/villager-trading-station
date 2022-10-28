@@ -3,7 +3,12 @@
   "minVersion": "0.8",
   "package": "me.ramidzkh.vts.mixins",
   "compatibilityLevel": "JAVA_16",
-  "mixins": [],
+  "mixins": [
+    "MemoryModuleTypeAccessor",
+    "SensorTypeAccessor",
+    "VillagerGoalPackagesMixin",
+    "VillagerMixin"
+  ],
   "client": ["MerchantScreenMixin"],
   "injectors": {
     "defaultRequire": 1
