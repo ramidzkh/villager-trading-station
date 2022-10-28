@@ -11,7 +11,6 @@ import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.npc.Villager;
 
 import java.util.Collections;
-import java.util.Optional;
 
 public class TradeAtStation extends Behavior<Villager> {
 
@@ -32,7 +31,7 @@ public class TradeAtStation extends Behavior<Villager> {
 
         this.lastCheck = level.getGameTime();
 
-        for (GlobalPos pos : villager.getBrain().getMemory(VillagerTradingStation.STATION_SITE)
+        for (var pos : villager.getBrain().getMemory(VillagerTradingStation.STATION_SITE)
                 .orElse(Collections.emptyList())) {
             if (pos.dimension() == level.dimension()
                     && pos.pos().closerToCenterThan(villager.position(), DISTANCE)
@@ -55,11 +54,11 @@ public class TradeAtStation extends Behavior<Villager> {
 
     @Override
     protected boolean canStillUse(ServerLevel level, Villager villager, long time) {
-        Optional<GlobalPos> optional = villager.getBrain().getMemory(MemoryModuleType.JOB_SITE);
+        var optional = villager.getBrain().getMemory(MemoryModuleType.JOB_SITE);
         if (optional.isEmpty()) {
             return false;
         }
-        GlobalPos pos = optional.get();
+        var pos = optional.get();
         return pos.dimension() == level.dimension() && pos.pos().closerToCenterThan(villager.position(), DISTANCE)
                 && level.getBlockEntity(pos.pos())instanceof TradingStationBlockEntity tradingStation
                 && tradingStation.canInteract(villager);

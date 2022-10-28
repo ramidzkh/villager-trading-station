@@ -104,7 +104,6 @@ public class TradingStationBlock extends BaseEntityBlock {
                     }
                 }
             }
-
         }
 
         return success ? InteractionResult.SUCCESS : InteractionResult.PASS;

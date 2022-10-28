@@ -7,7 +7,6 @@ import me.ramidzkh.vts.block.TradingStationBlockEntity;
 import me.ramidzkh.vts.item.QuoteItem;
 import me.ramidzkh.vts.mixins.MemoryModuleTypeAccessor;
 import me.ramidzkh.vts.mixins.SensorTypeAccessor;
-import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -25,7 +24,6 @@ import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.Material;
@@ -57,9 +55,8 @@ public interface VillagerTradingStation {
 
     Item QUOTE_ITEM = new QuoteItem(new Item.Properties().stacksTo(1));
 
-    CreativeModeTab TAB = FabricItemGroupBuilder.build(id("tab"),
-            () -> new ItemStack(VillagerTradingStation.TRADING_STATION_ITEM));
-    Item TRADING_STATION_ITEM = new BlockItem(TRADING_STATION_BLOCK, new Item.Properties().tab(TAB));
+    Item TRADING_STATION_ITEM = new BlockItem(TRADING_STATION_BLOCK,
+            new Item.Properties().tab(CreativeModeTab.TAB_MISC));
 
     TagKey<Item> QUOTE_CONVERTABLE = TagKey.create(Registry.ITEM_REGISTRY, id("quote_convertable"));
 

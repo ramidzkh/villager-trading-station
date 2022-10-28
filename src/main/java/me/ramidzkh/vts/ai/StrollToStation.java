@@ -12,7 +12,6 @@ import net.minecraft.world.entity.npc.Villager;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Optional;
 
 public class StrollToStation extends Behavior<Villager> {
 
@@ -35,8 +34,8 @@ public class StrollToStation extends Behavior<Villager> {
     @Override
     protected boolean checkExtraStartConditions(ServerLevel serverLevel, Villager villager) {
         List<GlobalPos> list;
-        Optional<List<GlobalPos>> sites = villager.getBrain().getMemory(VillagerTradingStation.STATION_SITE);
-        Optional<GlobalPos> job = villager.getBrain().getMemory(MemoryModuleType.JOB_SITE);
+        var sites = villager.getBrain().getMemory(VillagerTradingStation.STATION_SITE);
+        var job = villager.getBrain().getMemory(MemoryModuleType.JOB_SITE);
         if (sites.isPresent() && job.isPresent() && !(list = sites.get()).isEmpty()) {
             this.targetPos = list.get(serverLevel.getRandom().nextInt(list.size()));
             return this.targetPos != null && serverLevel.dimension() == this.targetPos.dimension()

@@ -12,6 +12,11 @@
   },
   "name": "Villager Trading Station",
   "description": "Automated villager trading",
-  "authors": ["ramidzkh", "ueaj"],
-  "license": ["LGPL-3.0-or-later"]
+  "icon": "logo.png",
+  "authors": ["ramidzkh"],
+  "license": ["LGPL-3.0-or-later"],
+  "contact": {
+    "homepage": "https://github.com/ramidzkh/Applied-Botanics#readme",
+    "issues": "https://github.com/ramidzkh/Applied-Botanics/issues"
+  }
 }

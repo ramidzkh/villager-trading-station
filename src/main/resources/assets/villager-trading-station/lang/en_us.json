@@ -1,5 +1,4 @@
 {
   "block.villager-trading-station.trading_station": "Trading Station",
-  "item.villager-trading-station.quote": "Quote",
-  "itemGroup.villager-trading-station.tab": "Villager Trading Stations"
+  "item.villager-trading-station.quote": "Quote"
 }
