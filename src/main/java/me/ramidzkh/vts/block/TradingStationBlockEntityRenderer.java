@@ -2,8 +2,6 @@ package me.ramidzkh.vts.block;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -15,17 +13,16 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class TradingStationBlockEntityRenderer implements BlockEntityRenderer<TradingStationBlockEntity> {
 
     @Override
     public void render(TradingStationBlockEntity tradingStation, float partialTicks, PoseStack matrices,
             MultiBufferSource multiBufferSource, int light, int overlay) {
-        List<ItemStack> variants = new ArrayList<>();
+        var variants = new ArrayList<ItemStack>();
 
         try (var transaction = Transaction.openOuter()) {
-            for (StorageView<ItemVariant> view : tradingStation.getStorage().iterable(transaction)) {
+            for (var view : tradingStation.getStorage().iterable(transaction)) {
                 if (!view.isResourceBlank()) {
                     var o = view.getResource().toStack();
                     o.enchant(Enchantments.KNOCKBACK, 1);

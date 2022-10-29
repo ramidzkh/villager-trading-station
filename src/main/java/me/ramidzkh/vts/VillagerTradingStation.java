@@ -7,20 +7,16 @@ import me.ramidzkh.vts.block.TradingStationBlockEntity;
 import me.ramidzkh.vts.item.QuoteItem;
 import me.ramidzkh.vts.mixins.MemoryModuleTypeAccessor;
 import me.ramidzkh.vts.mixins.SensorTypeAccessor;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
-import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.SensorType;
-import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -30,9 +26,6 @@ import net.minecraft.world.level.material.Material;
 
 import java.util.List;
 import java.util.Optional;
-
-import static net.minecraft.commands.Commands.argument;
-import static net.minecraft.commands.Commands.literal;
 
 public interface VillagerTradingStation {
 
@@ -79,48 +72,5 @@ public interface VillagerTradingStation {
 
         ServerPlayNetworking.registerGlobalReceiver(VillagerTradingStation.INSCRIBE_QUOTE,
                 MerchantScreenHandler::onInscribeQuote);
-
-        // spotless:off
-        CommandRegistrationCallback.EVENT.register
-((      dispatcher
-,       dedicated
-)->     dispatcher
-.       register
-(       literal
-(       "testing"
-).      then
-(       argument
-(       "pos"
-,       BlockPosArgument
-.       blockPos
-()).    then
-(       argument
-(       "villager"
-,       EntityArgument
-.       entity
-()).    executes
-(       context
-->{     var pos
-=       BlockPosArgument
-.       getLoadedBlockPos
-(       context
-,       "pos"
-);      var villager
-=       EntityArgument
-.       getEntity
-(       context,
-        "villager"
-);((    TradingStationBlockEntity
-)       context
-.       getSource
-().     getLevel
-().     getBlockEntity
-(       pos
-)).     interact
-(                                                                                                                                                                                                               (AbstractVillager)
-        villager
-);      return 1
-;})))));
-        // spotless:on
     }
 }

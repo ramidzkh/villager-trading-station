@@ -30,7 +30,7 @@ public abstract class VillagerGoalPackagesMixin {
                 copy.add(Pair.of(new TradeAtStation(), 7));
             } else if (pair.getFirst() instanceof StrollToPoiList) {
                 // Note that @ModifyArg cannot capture the arguments of the target method like some other injectors can
-                // Line f = 0.5f
+                // Inline f = 0.5f
                 copy.add(Pair.of(new StrollToStation(0.5f, 1, 6), 5));
             }
         }
