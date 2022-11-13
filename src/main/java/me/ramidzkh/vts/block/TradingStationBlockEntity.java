@@ -35,7 +35,7 @@ public class TradingStationBlockEntity extends BlockEntity implements ContainerL
 
     private final SimpleContainer inputs = new SimpleContainer(9);
     private final SimpleContainer outputs = new SimpleContainer(9);
-    private final SimpleContainer quotes = new SimpleContainer(1);
+    private final SimpleContainer quotes = new SimpleContainer(3);
 
     private final Storage<ItemVariant> inputStorage = InventoryStorage.of(inputs, null);
     private final Storage<ItemVariant> outputStorage = InventoryStorage.of(outputs, null);
