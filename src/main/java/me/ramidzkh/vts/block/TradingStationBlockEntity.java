@@ -11,15 +11,16 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.Container;
-import net.minecraft.world.ContainerListener;
-import net.minecraft.world.Containers;
-import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.*;
 import net.minecraft.world.entity.npc.AbstractVillager;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.Level;
@@ -30,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class TradingStationBlockEntity extends BlockEntity implements ContainerListener {
+public class TradingStationBlockEntity extends BlockEntity implements ContainerListener, MenuProvider {
 
     private final SimpleContainer inputs = new SimpleContainer(9);
     private final SimpleContainer outputs = new SimpleContainer(9);
@@ -41,7 +42,7 @@ public class TradingStationBlockEntity extends BlockEntity implements ContainerL
     private final Storage<ItemVariant> quoteStorage = new FilteringStorage<>(InventoryStorage.of(quotes, null)) {
         @Override
         protected boolean canInsert(ItemVariant resource) {
-            return resource.getItem() == VillagerTradingStation.QUOTE_ITEM;
+            return resource.isOf(VillagerTradingStation.QUOTE_ITEM);
         }
     };
     private final Storage<ItemVariant> exposed = new CombinedStorage<>(List.of(
@@ -174,5 +175,16 @@ public class TradingStationBlockEntity extends BlockEntity implements ContainerL
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.getChunkSource().blockChanged(getBlockPos());
         }
+    }
+
+    @Override
+    public Component getDisplayName() {
+        return getBlockState().getBlock().getName();
+    }
+
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
+        return new TradingStationMenu(containerId, inventory, this, inputs, outputs, quotes);
     }
 }

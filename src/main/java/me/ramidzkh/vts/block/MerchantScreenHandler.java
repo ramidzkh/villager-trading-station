@@ -41,7 +41,7 @@ public class MerchantScreenHandler {
 
             var quote = new ItemStack(VillagerTradingStation.QUOTE_ITEM);
             var item = (QuoteItem) quote.getItem();
-            item.setQuote(quote, new QuoteItem.Quote(offer.getCostA(), offer.getCostB(), offer.getResult()));
+            item.setQuote(quote, new QuoteItem.Quote(offer.getBaseCostA(), offer.getCostB(), offer.getResult()));
 
             if (!player.getAbilities().instabuild) {
                 cursor.shrink(1);
