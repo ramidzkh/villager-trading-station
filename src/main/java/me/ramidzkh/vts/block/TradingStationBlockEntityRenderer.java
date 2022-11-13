@@ -2,7 +2,6 @@ package me.ramidzkh.vts.block;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
-import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -21,13 +20,12 @@ public class TradingStationBlockEntityRenderer implements BlockEntityRenderer<Tr
             MultiBufferSource multiBufferSource, int light, int overlay) {
         var variants = new ArrayList<ItemStack>();
 
-        try (var transaction = Transaction.openOuter()) {
-            for (var view : tradingStation.getStorage().iterable(transaction)) {
-                if (!view.isResourceBlank()) {
-                    var o = view.getResource().toStack();
-                    o.enchant(Enchantments.KNOCKBACK, 1);
-                    variants.add(o);
-                }
+        for (var view : tradingStation.getStorage()) {
+            if (!view.isResourceBlank()) {
+                var o = view.getResource().toStack();
+                // Gives glint
+                o.enchant(Enchantments.KNOCKBACK, 1);
+                variants.add(o);
             }
         }
 

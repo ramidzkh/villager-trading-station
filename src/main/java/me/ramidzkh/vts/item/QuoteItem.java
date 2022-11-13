@@ -5,7 +5,6 @@ import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -32,15 +31,15 @@ public class QuoteItem extends Item {
         var b = quote.b();
         var result = quote.result();
 
-        list.add(new TextComponent("- Requires ").append(a.getHoverName()).append(" * ")
+        list.add(Component.literal("- Requires ").append(a.getHoverName()).append(" * ")
                 .append(Integer.toString(a.getCount())));
 
         if (!b.isEmpty()) {
-            list.add(new TextComponent("- Requires ").append(b.getHoverName()).append(" * ")
+            list.add(Component.literal("- Requires ").append(b.getHoverName()).append(" * ")
                     .append(Integer.toString(b.getCount())));
         }
 
-        list.add(new TextComponent("- Trades for ").append(result.getHoverName()).append(" * ")
+        list.add(Component.literal("- Trades for ").append(result.getHoverName()).append(" * ")
                 .append(Integer.toString(result.getCount())));
     }
 
