@@ -4,6 +4,7 @@ import me.ramidzkh.vts.ai.TradingStationSensor;
 import me.ramidzkh.vts.block.MerchantScreenHandler;
 import me.ramidzkh.vts.block.TradingStationBlock;
 import me.ramidzkh.vts.block.TradingStationBlockEntity;
+import me.ramidzkh.vts.block.TradingStationMenu;
 import me.ramidzkh.vts.item.QuoteItem;
 import me.ramidzkh.vts.mixins.MemoryModuleTypeAccessor;
 import me.ramidzkh.vts.mixins.SensorTypeAccessor;
@@ -17,6 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.SensorType;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -56,6 +58,8 @@ public interface VillagerTradingStation {
     MemoryModuleType<List<GlobalPos>> STATION_SITE = MemoryModuleTypeAccessor.create(Optional.empty());
     SensorType<TradingStationSensor> STATION_SENSOR = SensorTypeAccessor.create(TradingStationSensor::new);
 
+    MenuType<TradingStationMenu> TRADING_STATION_MENU = new MenuType<>(TradingStationMenu::new);
+
     static void initialize() {
         Registry.register(Registry.BLOCK, VillagerTradingStation.TRADING_STATION, TRADING_STATION_BLOCK);
         Registry.register(Registry.BLOCK_ENTITY_TYPE, TRADING_STATION, TRADING_STATION_BLOCK_ENTITY);
@@ -69,6 +73,8 @@ public interface VillagerTradingStation {
 
         Registry.register(Registry.MEMORY_MODULE_TYPE, TRADING_STATION, STATION_SITE);
         Registry.register(Registry.SENSOR_TYPE, TRADING_STATION, STATION_SENSOR);
+
+        Registry.register(Registry.MENU, TRADING_STATION, TRADING_STATION_MENU);
 
         ServerPlayNetworking.registerGlobalReceiver(VillagerTradingStation.INSCRIBE_QUOTE,
                 MerchantScreenHandler::onInscribeQuote);

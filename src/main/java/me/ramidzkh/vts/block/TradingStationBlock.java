@@ -1,11 +1,6 @@
 package me.ramidzkh.vts.block;
 
-import com.google.common.base.Predicates;
 import me.ramidzkh.vts.VillagerTradingStation;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
-import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
-import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -78,35 +73,13 @@ public class TradingStationBlock extends BaseEntityBlock {
     @Override
     public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player,
             InteractionHand interactionHand, BlockHitResult blockHitResult) {
-        var success = false;
-
-        if (level.getBlockEntity(blockPos)instanceof TradingStationBlockEntity tradingStation) {
-            if (player.isShiftKeyDown()) {
-                try (var transaction = Transaction.openOuter()) {
-                    success = StorageUtil.move(tradingStation.getQuotes(), PlayerInventoryStorage.of(player),
-                            Predicates.alwaysTrue(), 1, transaction) == 1;
-
-                    if (success) {
-                        transaction.commit();
-                    }
-                }
-            } else {
-                var hand = player.getItemInHand(interactionHand);
-
-                try (var transaction = Transaction.openOuter()) {
-                    if (tradingStation.getQuotes().insert(ItemVariant.of(hand), 1, transaction) == 1) {
-                        if (!player.getAbilities().instabuild) {
-                            hand.shrink(1);
-                        }
-
-                        transaction.commit();
-                        success = true;
-                    }
-                }
-            }
+        if (!level.isClientSide()
+                && level.getBlockEntity(blockPos)instanceof TradingStationBlockEntity tradingStation) {
+            player.openMenu(tradingStation);
+            return InteractionResult.CONSUME;
         }
 
-        return success ? InteractionResult.SUCCESS : InteractionResult.PASS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override
