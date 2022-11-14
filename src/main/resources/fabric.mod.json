@@ -2,6 +2,10 @@
   "schemaVersion": 1,
   "id": "villager-trading-station",
   "version": "${version}",
+  "depends": {
+    "minecraft": "1.19.2",
+    "fabric-api": [">=0.70.0"]
+  },
   "mixins": ["villager-trading-station.mixins.json"],
   "entrypoints": {
     "main": ["me.ramidzkh.vts.VillagerTradingStation::initialize"],

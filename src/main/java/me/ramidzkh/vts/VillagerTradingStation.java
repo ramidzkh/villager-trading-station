@@ -11,7 +11,6 @@ import me.ramidzkh.vts.mixins.SensorTypeAccessor;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
@@ -63,10 +62,6 @@ public interface VillagerTradingStation {
     static void initialize() {
         Registry.register(Registry.BLOCK, VillagerTradingStation.TRADING_STATION, TRADING_STATION_BLOCK);
         Registry.register(Registry.BLOCK_ENTITY_TYPE, TRADING_STATION, TRADING_STATION_BLOCK_ENTITY);
-
-        // TODO: Replace with SidedStorageBlockEntity for 1.19
-        ItemStorage.SIDED.registerForBlockEntity((tradingStationBlock, direction) -> tradingStationBlock.getStorage(),
-                TRADING_STATION_BLOCK_ENTITY);
 
         Registry.register(Registry.ITEM, id("quote"), QUOTE_ITEM);
         Registry.register(Registry.ITEM, TRADING_STATION, TRADING_STATION_ITEM);

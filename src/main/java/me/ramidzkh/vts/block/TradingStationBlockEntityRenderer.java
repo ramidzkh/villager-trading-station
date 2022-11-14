@@ -20,7 +20,7 @@ public class TradingStationBlockEntityRenderer implements BlockEntityRenderer<Tr
             MultiBufferSource multiBufferSource, int light, int overlay) {
         var variants = new ArrayList<ItemStack>();
 
-        for (var view : tradingStation.getStorage()) {
+        for (var view : tradingStation.getItemStorage(null)) {
             if (!view.isResourceBlank()) {
                 var o = view.getResource().toStack();
                 // Gives glint

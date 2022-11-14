@@ -1,15 +1,16 @@
 package me.ramidzkh.vts.block;
 
-import me.ramidzkh.vts.VillagerTradingStation;
 import me.ramidzkh.vts.item.QuoteItem;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.FilteringStorage;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.SidedStorageBlockEntity;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -27,11 +28,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class TradingStationBlockEntity extends BlockEntity implements ContainerListener, MenuProvider {
+public class TradingStationBlockEntity extends BlockEntity
+        implements SidedStorageBlockEntity, ContainerListener, MenuProvider {
 
     private final SimpleContainer inputs = new SimpleContainer(9);
     private final SimpleContainer outputs = new SimpleContainer(9);
@@ -39,12 +42,6 @@ public class TradingStationBlockEntity extends BlockEntity implements ContainerL
 
     private final Storage<ItemVariant> inputStorage = InventoryStorage.of(inputs, null);
     private final Storage<ItemVariant> outputStorage = InventoryStorage.of(outputs, null);
-    private final Storage<ItemVariant> quoteStorage = new FilteringStorage<>(InventoryStorage.of(quotes, null)) {
-        @Override
-        protected boolean canInsert(ItemVariant resource) {
-            return resource.isOf(VillagerTradingStation.QUOTE_ITEM);
-        }
-    };
     private final Storage<ItemVariant> exposed = new CombinedStorage<>(List.of(
             FilteringStorage.insertOnlyOf(inputStorage),
             FilteringStorage.extractOnlyOf(outputStorage)));
@@ -57,12 +54,9 @@ public class TradingStationBlockEntity extends BlockEntity implements ContainerL
         quotes.addListener(this);
     }
 
-    public Storage<ItemVariant> getStorage() {
+    @Override
+    public @NotNull Storage<ItemVariant> getItemStorage(Direction side) {
         return exposed;
-    }
-
-    public Storage<ItemVariant> getQuotes() {
-        return quoteStorage;
     }
 
     public void interact(AbstractVillager villager) {
