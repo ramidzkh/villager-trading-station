@@ -32,8 +32,8 @@ public abstract class VillagerGoalPackagesMixin {
             } else if (pair.getFirst() instanceof OneShot) {
                 // After the 3rd oneshot, i.e. StrollToPoiList
                 if (++oneshots == 3) {
-                    // Note that @ModifyArg cannot capture the arguments of the target method like some other injectors can
-                    // Inline f = 0.5f
+                    // Note that @ModifyArg cannot capture the arguments of the target method like some other injectors
+                    // can, inline f = 0.5f
                     copy.add(Pair.of(new StrollToStation(0.5f, 1, 6), 5));
                 }
             }

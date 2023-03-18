@@ -37,6 +37,6 @@ public class TradingStationScreen extends AbstractContainerScreen<TradingStation
         RenderSystem.setShaderTexture(0, CONTAINER_LOCATION);
         var k = (this.width - this.imageWidth) / 2;
         var l = (this.height - this.imageHeight) / 2;
-        this.blit(poseStack, k, l, 0, 0, this.imageWidth, this.imageHeight);
+        blit(poseStack, k, l, 0, 0, this.imageWidth, this.imageHeight);
     }
 }

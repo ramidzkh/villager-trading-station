@@ -20,6 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.SensorType;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -59,7 +60,8 @@ public interface VillagerTradingStation {
     MemoryModuleType<List<GlobalPos>> STATION_SITE = MemoryModuleTypeAccessor.create(Optional.empty());
     SensorType<TradingStationSensor> STATION_SENSOR = SensorTypeAccessor.create(TradingStationSensor::new);
 
-    MenuType<TradingStationMenu> TRADING_STATION_MENU = new MenuType<>(TradingStationMenu::new);
+    MenuType<TradingStationMenu> TRADING_STATION_MENU = new MenuType<>(TradingStationMenu::new,
+            FeatureFlags.VANILLA_SET);
 
     static void initialize() {
         Registry.register(BuiltInRegistries.BLOCK, VillagerTradingStation.TRADING_STATION, TRADING_STATION_BLOCK);
@@ -73,7 +75,8 @@ public interface VillagerTradingStation {
 
         Registry.register(BuiltInRegistries.MENU, TRADING_STATION, TRADING_STATION_MENU);
 
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.INGREDIENTS).register(entries -> entries.accept(TRADING_STATION_ITEM));
+        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.INGREDIENTS)
+                .register(entries -> entries.accept(TRADING_STATION_ITEM));
 
         ServerPlayNetworking.registerGlobalReceiver(VillagerTradingStation.INSCRIBE_QUOTE,
                 MerchantScreenHandler::onInscribeQuote);

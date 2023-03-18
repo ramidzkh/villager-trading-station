@@ -1,7 +1,6 @@
 package me.ramidzkh.vts.data;
 
 import me.ramidzkh.vts.VillagerTradingStation;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.core.HolderLookup;
@@ -17,7 +16,8 @@ public class BlockTagsProvider extends FabricTagProvider.BlockTagProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider arg) {
-        tag(BlockTags.MINEABLE_WITH_HOE).add(VillagerTradingStation.TRADING_STATION_BLOCK.builtInRegistryHolder().key());
+        tag(BlockTags.MINEABLE_WITH_HOE)
+                .add(VillagerTradingStation.TRADING_STATION_BLOCK.builtInRegistryHolder().key());
 
     }
 }

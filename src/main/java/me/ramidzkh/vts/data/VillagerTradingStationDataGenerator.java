@@ -9,7 +9,8 @@ public class VillagerTradingStationDataGenerator implements DataGeneratorEntrypo
     public void onInitializeDataGenerator(FabricDataGenerator dataGenerator) {
         var pack = dataGenerator.createPack();
         var blockTagsProvider = pack.addProvider(BlockTagsProvider::new);
-        pack.addProvider((output, registriesFuture) -> new ItemTagsProvider(output, registriesFuture, blockTagsProvider));
+        pack.addProvider(
+                (output, registriesFuture) -> new ItemTagsProvider(output, registriesFuture, blockTagsProvider));
         pack.addProvider(RecipeProvider::new);
         pack.addProvider(BlockLootTableProvider::new);
 
