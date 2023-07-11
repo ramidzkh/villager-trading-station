@@ -6,13 +6,14 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 public class VillagerTradingStationDataGenerator implements DataGeneratorEntrypoint {
 
     @Override
-    public void onInitializeDataGenerator(FabricDataGenerator dataGenerator) {
-        var blockTagsProvider = new BlockTagsProvider(dataGenerator);
-        dataGenerator.addProvider(blockTagsProvider);
-        dataGenerator.addProvider(new ItemTagsProvider(dataGenerator, blockTagsProvider));
-        dataGenerator.addProvider(new RecipeProvider(dataGenerator));
-        dataGenerator.addProvider(new BlockLootTableProvider(dataGenerator));
+    public void onInitializeDataGenerator(FabricDataGenerator generator) {
+        var pack = generator.createPack();
+        var blockTagsProvider = pack.addProvider(BlockTagsProvider::new);
+        pack.addProvider(
+                (output, registriesFuture) -> new ItemTagsProvider(output, registriesFuture, blockTagsProvider));
+        pack.addProvider(RecipeProvider::new);
+        pack.addProvider(BlockLootTableProvider::new);
 
-        dataGenerator.addProvider(new ModelProvider(dataGenerator));
+        pack.addProvider(ModelProvider::new);
     }
 }

@@ -1,7 +1,7 @@
 package me.ramidzkh.vts.data;
 
 import me.ramidzkh.vts.VillagerTradingStation;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.data.models.BlockModelGenerators;
@@ -17,8 +17,8 @@ import static me.ramidzkh.vts.VillagerTradingStation.id;
 
 public class ModelProvider extends FabricModelProvider {
 
-    public ModelProvider(FabricDataGenerator dataGenerator) {
-        super(dataGenerator);
+    public ModelProvider(FabricDataOutput output) {
+        super(output);
     }
 
     @Override

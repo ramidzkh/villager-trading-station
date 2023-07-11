@@ -1,12 +1,12 @@
 package me.ramidzkh.vts.block;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.phys.Vec3;
@@ -40,12 +40,12 @@ public class TradingStationBlockEntityRenderer implements BlockEntityRenderer<Tr
         for (var i = 0; i < variants.size(); i++) {
             matrices.pushPose();
             matrices.translate(0.5F, 1.25F, 0.5F);
-            matrices.mulPose(Vector3f.YP.rotationDegrees(angles[i] + time));
+            matrices.mulPose(Axis.YP.rotationDegrees(angles[i] + time));
             matrices.translate(0.875F, 0F, 0.25F);
-            matrices.mulPose(Vector3f.YP.rotationDegrees(90F));
+            matrices.mulPose(Axis.YP.rotationDegrees(90F));
             matrices.translate(0D, 0.075 * Mth.sin((time + i * 10) / 5), 0F);
-            Minecraft.getInstance().getItemRenderer().renderStatic(variants.get(i), ItemTransforms.TransformType.GROUND,
-                    light, overlay, matrices, multiBufferSource, 0);
+            Minecraft.getInstance().getItemRenderer().renderStatic(variants.get(i), ItemDisplayContext.GROUND,
+                    light, overlay, matrices, multiBufferSource, tradingStation.getLevel(), 0);
             matrices.popPose();
         }
     }

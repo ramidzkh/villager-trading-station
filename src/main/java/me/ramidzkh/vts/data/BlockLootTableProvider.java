@@ -1,17 +1,17 @@
 package me.ramidzkh.vts.data;
 
 import me.ramidzkh.vts.VillagerTradingStation;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
 
 public class BlockLootTableProvider extends FabricBlockLootTableProvider {
 
-    protected BlockLootTableProvider(FabricDataGenerator dataGenerator) {
-        super(dataGenerator);
+    protected BlockLootTableProvider(FabricDataOutput dataOutput) {
+        super(dataOutput);
     }
 
     @Override
-    protected void generateBlockLootTables() {
+    public void generate() {
         this.dropSelf(VillagerTradingStation.TRADING_STATION_BLOCK);
     }
 }

@@ -63,7 +63,7 @@ public class TradingStationBlockEntity extends BlockEntity
         for (var i = 0; i < quotes.getContainerSize(); i++) {
             var stack = quotes.getItem(i);
 
-            if (!(stack.getItem()instanceof QuoteItem quoteItem)) {
+            if (!(stack.getItem() instanceof QuoteItem quoteItem)) {
                 continue;
             }
 
@@ -76,7 +76,7 @@ public class TradingStationBlockEntity extends BlockEntity
                 }
 
                 // MerchantOffer#satisfiedBy but exact amounts
-                if (ItemStack.isSame(offer.getResult(), quote.result())
+                if (ItemStack.isSameItemSameTags(offer.getResult(), quote.result())
                         && offer.satisfiedBy(quote.a(), quote.b())
                         && offer.getCostA().getCount() == quote.a().getCount()
                         && offer.getCostB().getCount() == quote.b().getCount()) {
@@ -105,7 +105,7 @@ public class TradingStationBlockEntity extends BlockEntity
         for (var i = 0; i < quotes.getContainerSize(); i++) {
             var stack = quotes.getItem(i);
 
-            if (!(stack.getItem()instanceof QuoteItem quoteItem)) {
+            if (!(stack.getItem() instanceof QuoteItem quoteItem)) {
                 continue;
             }
 
@@ -117,7 +117,7 @@ public class TradingStationBlockEntity extends BlockEntity
                 }
 
                 // MerchantOffer#satisfiedBy but exact amounts
-                if (ItemStack.isSame(offer.getResult(), quote.result())
+                if (ItemStack.isSameItemSameTags(offer.getResult(), quote.result())
                         && offer.satisfiedBy(quote.a(), quote.b())
                         && offer.getCostA().getCount() == quote.a().getCount()
                         && offer.getCostB().getCount() == quote.b().getCount()) {

@@ -35,7 +35,7 @@ public class TradeAtStation extends Behavior<Villager> {
                 .orElse(Collections.emptyList())) {
             if (pos.dimension() == level.dimension()
                     && pos.pos().closerToCenterThan(villager.position(), DISTANCE)
-                    && level.getBlockEntity(pos.pos())instanceof TradingStationBlockEntity tradingStation
+                    && level.getBlockEntity(pos.pos()) instanceof TradingStationBlockEntity tradingStation
                     && tradingStation.canInteract(villager)) {
                 this.targetPos = pos;
                 return true;
@@ -47,7 +47,7 @@ public class TradeAtStation extends Behavior<Villager> {
 
     @Override
     protected void start(ServerLevel level, Villager villager, long time) {
-        if (level.getBlockEntity(targetPos.pos())instanceof TradingStationBlockEntity tradingStation) {
+        if (level.getBlockEntity(targetPos.pos()) instanceof TradingStationBlockEntity tradingStation) {
             tradingStation.interact(villager);
         }
     }
@@ -60,7 +60,7 @@ public class TradeAtStation extends Behavior<Villager> {
         }
         var pos = optional.get();
         return pos.dimension() == level.dimension() && pos.pos().closerToCenterThan(villager.position(), DISTANCE)
-                && level.getBlockEntity(pos.pos())instanceof TradingStationBlockEntity tradingStation
+                && level.getBlockEntity(pos.pos()) instanceof TradingStationBlockEntity tradingStation
                 && tradingStation.canInteract(villager);
     }
 }

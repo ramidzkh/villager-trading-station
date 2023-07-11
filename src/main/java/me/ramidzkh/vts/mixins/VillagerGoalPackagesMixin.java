@@ -4,7 +4,6 @@ import com.mojang.datafixers.util.Pair;
 import me.ramidzkh.vts.ai.StrollToStation;
 import me.ramidzkh.vts.ai.TradeAtStation;
 import net.minecraft.world.entity.ai.behavior.Behavior;
-import net.minecraft.world.entity.ai.behavior.StrollToPoiList;
 import net.minecraft.world.entity.ai.behavior.VillagerGoalPackages;
 import net.minecraft.world.entity.ai.behavior.WorkAtPoi;
 import net.minecraft.world.entity.npc.Villager;
@@ -27,8 +26,9 @@ public abstract class VillagerGoalPackagesMixin {
             copy.add(pair);
 
             if (pair.getFirst() instanceof WorkAtPoi) {
-                copy.add(Pair.of(new TradeAtStation(), 7));
-            } else if (pair.getFirst() instanceof StrollToPoiList) {
+                // Trading is equivalent to working
+                copy.add(Pair.of(new TradeAtStation(), pair.getSecond()));
+            } else if (pair.getSecond() == 5) { // StrollToPoi(should be List but whatever)
                 // Note that @ModifyArg cannot capture the arguments of the target method like some other injectors can
                 // Inline f = 0.5f
                 copy.add(Pair.of(new StrollToStation(0.5f, 1, 6), 5));

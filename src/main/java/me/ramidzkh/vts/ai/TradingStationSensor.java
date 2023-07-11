@@ -27,7 +27,7 @@ public class TradingStationSensor extends Sensor<Villager> {
         var list = new ArrayList<GlobalPos>();
 
         for (var pos : BlockPos.withinManhattan(villager.blockPosition(), 4, 2, 4)) {
-            if (serverLevel.getBlockEntity(pos)instanceof TradingStationBlockEntity tradingStation
+            if (serverLevel.getBlockEntity(pos) instanceof TradingStationBlockEntity tradingStation
                     && tradingStation.canInteract(villager)) {
                 list.add(GlobalPos.of(dimension, pos.immutable()));
             }

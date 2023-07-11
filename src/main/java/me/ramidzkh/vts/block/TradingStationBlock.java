@@ -74,7 +74,7 @@ public class TradingStationBlock extends BaseEntityBlock {
     public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player,
             InteractionHand interactionHand, BlockHitResult blockHitResult) {
         if (!level.isClientSide()
-                && level.getBlockEntity(blockPos)instanceof TradingStationBlockEntity tradingStation) {
+                && level.getBlockEntity(blockPos) instanceof TradingStationBlockEntity tradingStation) {
             player.openMenu(tradingStation);
             return InteractionResult.CONSUME;
         }
@@ -84,7 +84,7 @@ public class TradingStationBlock extends BaseEntityBlock {
 
     @Override
     public void onRemove(BlockState blockState, Level level, BlockPos blockPos, BlockState blockState2, boolean bl) {
-        if (level.getBlockEntity(blockPos)instanceof TradingStationBlockEntity tradingStation) {
+        if (level.getBlockEntity(blockPos) instanceof TradingStationBlockEntity tradingStation) {
             tradingStation.drop(level, blockPos);
         }
 

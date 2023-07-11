@@ -25,7 +25,7 @@ public class TradingStationMenu extends AbstractContainerMenu {
             Container quotes) {
         super(VillagerTradingStation.TRADING_STATION_MENU, containerId);
 
-        if (tradingStation != null && tradingStation.getLevel()instanceof ServerLevel serverLevel) {
+        if (tradingStation != null && tradingStation.getLevel() instanceof ServerLevel serverLevel) {
             this.record = new TradingStationRecord(serverLevel, tradingStation.getBlockPos(), tradingStation);
         } else {
             this.record = null;
