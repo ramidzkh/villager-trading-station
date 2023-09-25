@@ -83,7 +83,7 @@ public class TradingStationMenu extends AbstractContainerMenu {
             }
 
             if (originalStack.isEmpty()) {
-                slot.set(ItemStack.EMPTY);
+                slot.setByPlayer(ItemStack.EMPTY);
             } else {
                 slot.setChanged();
             }
