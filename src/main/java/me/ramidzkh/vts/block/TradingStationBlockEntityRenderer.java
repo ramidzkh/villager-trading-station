@@ -29,18 +29,12 @@ public class TradingStationBlockEntityRenderer implements BlockEntityRenderer<Tr
             }
         }
 
-        var angles = new float[variants.size()];
-
-        for (var i = 0; i < angles.length; i++) {
-            angles[i] = i * 360F / variants.size();
-        }
-
         var time = ((int) tradingStation.getLevel().getGameTime()) + partialTicks;
 
         for (var i = 0; i < variants.size(); i++) {
             matrices.pushPose();
             matrices.translate(0.5F, 1.25F, 0.5F);
-            matrices.mulPose(Axis.YP.rotationDegrees(angles[i] + time));
+            matrices.mulPose(Axis.YP.rotationDegrees(i * 360F / variants.size() + time));
             matrices.translate(0.875F, 0F, 0.25F);
             matrices.mulPose(Axis.YP.rotationDegrees(90F));
             matrices.translate(0D, 0.075 * Mth.sin((time + i * 10) / 5), 0F);

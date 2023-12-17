@@ -6,6 +6,7 @@ import me.ramidzkh.vts.block.TradingStationBlockEntity;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.behavior.Behavior;
+import net.minecraft.world.entity.ai.behavior.BlockPosTracker;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.npc.Villager;
@@ -20,7 +21,8 @@ public class TradeAtStation extends Behavior<Villager> {
     private GlobalPos targetPos;
 
     public TradeAtStation() {
-        super(ImmutableMap.of(VillagerTradingStation.STATION_SITE, MemoryStatus.VALUE_PRESENT));
+        super(ImmutableMap.of(VillagerTradingStation.STATION_SITE, MemoryStatus.VALUE_PRESENT,
+                MemoryModuleType.LOOK_TARGET, MemoryStatus.REGISTERED));
     }
 
     @Override
@@ -47,7 +49,11 @@ public class TradeAtStation extends Behavior<Villager> {
 
     @Override
     protected void start(ServerLevel level, Villager villager, long time) {
+        var brain = villager.getBrain();
+
         if (level.getBlockEntity(targetPos.pos()) instanceof TradingStationBlockEntity tradingStation) {
+            brain.setMemory(MemoryModuleType.LAST_WORKED_AT_POI, time);
+            brain.setMemory(MemoryModuleType.LOOK_TARGET, new BlockPosTracker(targetPos.pos()));
             tradingStation.interact(villager);
         }
     }
@@ -55,9 +61,11 @@ public class TradeAtStation extends Behavior<Villager> {
     @Override
     protected boolean canStillUse(ServerLevel level, Villager villager, long time) {
         var optional = villager.getBrain().getMemory(MemoryModuleType.JOB_SITE);
+
         if (optional.isEmpty()) {
             return false;
         }
+
         var pos = optional.get();
         return pos.dimension() == level.dimension() && pos.pos().closerToCenterThan(villager.position(), DISTANCE)
                 && level.getBlockEntity(pos.pos()) instanceof TradingStationBlockEntity tradingStation

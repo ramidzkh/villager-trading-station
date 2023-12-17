@@ -8,10 +8,10 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.FilteringStorage;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SidedStorageBlockEntity;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
-import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -139,9 +139,9 @@ public class TradingStationBlockEntity extends BlockEntity
     public void load(CompoundTag compoundTag) {
         super.load(compoundTag);
 
-        inputs.fromTag(compoundTag.getList("Inputs", NbtType.COMPOUND));
-        outputs.fromTag(compoundTag.getList("Outputs", NbtType.COMPOUND));
-        quotes.fromTag(compoundTag.getList("Quotes", NbtType.COMPOUND));
+        inputs.fromTag(compoundTag.getList("Inputs", Tag.TAG_COMPOUND));
+        outputs.fromTag(compoundTag.getList("Outputs", Tag.TAG_COMPOUND));
+        quotes.fromTag(compoundTag.getList("Quotes", Tag.TAG_COMPOUND));
     }
 
     @Override

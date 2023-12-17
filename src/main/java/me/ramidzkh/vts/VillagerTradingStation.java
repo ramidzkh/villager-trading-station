@@ -6,8 +6,6 @@ import me.ramidzkh.vts.block.TradingStationBlock;
 import me.ramidzkh.vts.block.TradingStationBlockEntity;
 import me.ramidzkh.vts.block.TradingStationMenu;
 import me.ramidzkh.vts.item.QuoteItem;
-import me.ramidzkh.vts.mixins.MemoryModuleTypeAccessor;
-import me.ramidzkh.vts.mixins.SensorTypeAccessor;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -58,8 +56,8 @@ public interface VillagerTradingStation {
 
     TagKey<Item> QUOTE_CONVERTABLE = TagKey.create(Registries.ITEM, id("quote_convertable"));
 
-    MemoryModuleType<List<GlobalPos>> STATION_SITE = MemoryModuleTypeAccessor.create(Optional.empty());
-    SensorType<TradingStationSensor> STATION_SENSOR = SensorTypeAccessor.create(TradingStationSensor::new);
+    MemoryModuleType<List<GlobalPos>> STATION_SITE = new MemoryModuleType<>(Optional.empty());
+    SensorType<TradingStationSensor> STATION_SENSOR = new SensorType<>(TradingStationSensor::new);
 
     MenuType<TradingStationMenu> TRADING_STATION_MENU = new MenuType<>(TradingStationMenu::new,
             FeatureFlags.VANILLA_SET);

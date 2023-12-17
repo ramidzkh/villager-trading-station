@@ -1,5 +1,6 @@
 package me.ramidzkh.vts.block;
 
+import com.mojang.serialization.MapCodec;
 import me.ramidzkh.vts.VillagerTradingStation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -24,6 +25,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class TradingStationBlock extends BaseEntityBlock {
 
+    public static final MapCodec<TradingStationBlock> CODEC = simpleCodec(TradingStationBlock::new);
+
     private static final VoxelShape[] SHAPES = new VoxelShape[3];
 
     static {
@@ -45,6 +48,11 @@ public class TradingStationBlock extends BaseEntityBlock {
 
     public TradingStationBlock(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
     }
 
     @Override
