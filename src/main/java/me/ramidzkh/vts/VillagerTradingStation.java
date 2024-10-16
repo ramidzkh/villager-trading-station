@@ -36,7 +36,7 @@ public interface VillagerTradingStation {
     String MOD_ID = "villager-trading-station";
 
     static ResourceLocation id(String path) {
-        return new ResourceLocation(MOD_ID, path);
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 
     ResourceLocation TRADING_STATION = id("trading_station");

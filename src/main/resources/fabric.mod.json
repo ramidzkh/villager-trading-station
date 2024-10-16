@@ -3,7 +3,7 @@
   "id": "villager-trading-station",
   "version": "${version}",
   "depends": {
-    "minecraft": "1.20.6",
+    "minecraft": "${minecraft_version}",
     "fabric-api": ">=0.100.0"
   },
   "mixins": ["villager-trading-station.mixins.json"],

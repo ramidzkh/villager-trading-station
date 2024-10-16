@@ -55,12 +55,13 @@ clean {
 
 processResources {
     inputs.property("version", project.version)
+    inputs.property("minecraft_version", minecraft_version)
 
     from("LICENSE")
     exclude(".cache")
 
     filesMatching("fabric.mod.json") {
-        expand("version": project.version)
+        expand("version": project.version, "minecraft_version": minecraft_version)
     }
 }
 

@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -22,10 +21,7 @@ public class TradingStationBlockEntityRenderer implements BlockEntityRenderer<Tr
 
         for (var view : tradingStation.getItemStorage(null)) {
             if (!view.isResourceBlank()) {
-                var o = view.getResource().toStack();
-                // Gives glint
-                o.enchant(Enchantments.KNOCKBACK, 1);
-                variants.add(o);
+                variants.add(view.getResource().toStack());
             }
         }
 
