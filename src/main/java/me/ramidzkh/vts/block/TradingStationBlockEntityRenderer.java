@@ -29,7 +29,7 @@ public class TradingStationBlockEntityRenderer implements BlockEntityRenderer<Tr
             }
         }
 
-        var time = ((int) tradingStation.getLevel().getGameTime()) + partialTicks;
+        var time = tradingStation.getLevel().getGameTime() + partialTicks;
 
         for (var i = 0; i < variants.size(); i++) {
             matrices.pushPose();

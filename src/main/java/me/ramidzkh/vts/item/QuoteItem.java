@@ -1,9 +1,9 @@
 package me.ramidzkh.vts.item;
 
+import me.ramidzkh.vts.VillagerTradingStation;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -13,7 +13,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -24,22 +23,27 @@ public class QuoteItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> list,
+    public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, List<Component> list,
             TooltipFlag tooltipFlag) {
-        var quote = getQuote(itemStack);
+        var quote = itemStack.get(VillagerTradingStation.QUOTE);
+
+        if (quote == null) {
+            return;
+        }
+
         var a = quote.a();
         var b = quote.b();
         var result = quote.result();
 
-        list.add(Component.literal("- Requires ").append(a.getHoverName()).append(" * ")
-                .append(Integer.toString(a.getCount())));
+        list.add(Component.literal("- Requires ").append(a.itemStack().getDisplayName()).append(" * ")
+                .append(Integer.toString(a.count())));
 
-        if (!b.isEmpty()) {
-            list.add(Component.literal("- Requires ").append(b.getHoverName()).append(" * ")
-                    .append(Integer.toString(b.getCount())));
-        }
+        b.ifPresent(cost -> {
+            list.add(Component.literal("- Requires ").append(cost.itemStack().getDisplayName()).append(" * ")
+                    .append(Integer.toString(cost.count())));
+        });
 
-        list.add(Component.literal("- Trades for ").append(result.getHoverName()).append(" * ")
+        list.add(Component.literal("- Trades for ").append(result.getDisplayName()).append(" * ")
                 .append(Integer.toString(result.getCount())));
     }
 
@@ -60,32 +64,5 @@ public class QuoteItem extends Item {
         }
 
         return InteractionResultHolder.pass(hand);
-    }
-
-    public Quote getQuote(ItemStack stack) {
-        var tag = stack.getTag();
-
-        if (tag != null) {
-            return new Quote(ItemStack.of(tag.getCompound("A")), ItemStack.of(tag.getCompound("B")),
-                    ItemStack.of(tag.getCompound("Result")));
-        } else {
-            return Quote.EMPTY;
-        }
-    }
-
-    public void setQuote(ItemStack stack, Quote quote) {
-        var a = quote.a().save(new CompoundTag());
-        var b = quote.b().save(new CompoundTag());
-        var result = quote.result().save(new CompoundTag());
-
-        var tag = stack.getOrCreateTag();
-        tag.put("A", a);
-        tag.put("B", b);
-        tag.put("Result", result);
-    }
-
-    public record Quote(ItemStack a, ItemStack b, ItemStack result) {
-
-        public static final Quote EMPTY = new Quote(ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY);
     }
 }

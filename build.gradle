@@ -25,7 +25,7 @@ sourceSets {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
@@ -55,7 +55,6 @@ clean {
 
 processResources {
     inputs.property("version", project.version)
-    setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
 
     from("LICENSE")
     exclude(".cache")

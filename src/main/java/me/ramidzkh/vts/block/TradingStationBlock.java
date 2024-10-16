@@ -4,7 +4,6 @@ import com.mojang.serialization.MapCodec;
 import me.ramidzkh.vts.VillagerTradingStation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -79,8 +78,8 @@ public class TradingStationBlock extends BaseEntityBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player,
-            InteractionHand interactionHand, BlockHitResult blockHitResult) {
+    protected InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player,
+            BlockHitResult blockHitResult) {
         if (!level.isClientSide()
                 && level.getBlockEntity(blockPos) instanceof TradingStationBlockEntity tradingStation) {
             player.openMenu(tradingStation);

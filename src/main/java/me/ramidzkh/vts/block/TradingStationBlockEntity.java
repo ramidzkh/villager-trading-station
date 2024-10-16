@@ -1,6 +1,6 @@
 package me.ramidzkh.vts.block;
 
-import me.ramidzkh.vts.item.QuoteItem;
+import me.ramidzkh.vts.VillagerTradingStation;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.SidedStorageBlockEntity;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -22,7 +23,6 @@ import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -61,13 +61,12 @@ public class TradingStationBlockEntity extends BlockEntity
 
     public void interact(AbstractVillager villager) {
         for (var i = 0; i < quotes.getContainerSize(); i++) {
-            var stack = quotes.getItem(i);
+            var quote = quotes.getItem(i).get(VillagerTradingStation.QUOTE);
 
-            if (!(stack.getItem() instanceof QuoteItem quoteItem)) {
+            if (quote == null) {
                 continue;
             }
 
-            var quote = quoteItem.getQuote(stack);
             MerchantOffer myOffer = null;
 
             for (var offer : villager.getOffers()) {
@@ -75,11 +74,7 @@ public class TradingStationBlockEntity extends BlockEntity
                     continue;
                 }
 
-                // MerchantOffer#satisfiedBy but exact amounts
-                if (ItemStack.isSameItemSameTags(offer.getResult(), quote.result())
-                        && offer.satisfiedBy(quote.a(), quote.b())
-                        && offer.getCostA().getCount() == quote.a().getCount()
-                        && offer.getCostB().getCount() == quote.b().getCount()) {
+                if (quote.satisfiedBy(offer)) {
                     myOffer = offer;
                     break;
                 }
@@ -87,15 +82,27 @@ public class TradingStationBlockEntity extends BlockEntity
 
             if (myOffer != null) {
                 try (var transaction = Transaction.openOuter()) {
-                    if (inputStorage.extract(ItemVariant.of(quote.a()), quote.a().getCount(), transaction) == quote.a()
-                            .getCount()
-                            && (quote.b().isEmpty() || inputStorage.extract(ItemVariant.of(quote.b()),
-                                    quote.b().getCount(), transaction) == quote.b().getCount())
-                            && outputStorage.insert(ItemVariant.of(quote.result()), quote.result().getCount(),
-                                    transaction) == quote.result().getCount()) {
-                        villager.notifyTrade(myOffer);
-                        transaction.commit();
+                    if (inputStorage.extract(ItemVariant.of(quote.a().itemStack()), quote.a().count(),
+                            transaction) != quote.a().count()) {
+                        continue;
                     }
+
+                    if (quote.b().isPresent()) {
+                        var cost = quote.b().get();
+
+                        if (inputStorage.extract(ItemVariant.of(cost.itemStack()), cost.count(), transaction) != cost
+                                .count()) {
+                            continue;
+                        }
+                    }
+
+                    if (outputStorage.insert(ItemVariant.of(quote.result()), quote.result().getCount(),
+                            transaction) != quote.result().getCount()) {
+                        continue;
+                    }
+
+                    villager.notifyTrade(myOffer);
+                    transaction.commit();
                 }
             }
         }
@@ -103,24 +110,18 @@ public class TradingStationBlockEntity extends BlockEntity
 
     public boolean canInteract(AbstractVillager villager) {
         for (var i = 0; i < quotes.getContainerSize(); i++) {
-            var stack = quotes.getItem(i);
+            var quote = quotes.getItem(i).get(VillagerTradingStation.QUOTE);
 
-            if (!(stack.getItem() instanceof QuoteItem quoteItem)) {
+            if (quote == null) {
                 continue;
             }
-
-            var quote = quoteItem.getQuote(stack);
 
             for (var offer : villager.getOffers()) {
                 if (offer.isOutOfStock()) {
                     continue;
                 }
 
-                // MerchantOffer#satisfiedBy but exact amounts
-                if (ItemStack.isSameItemSameTags(offer.getResult(), quote.result())
-                        && offer.satisfiedBy(quote.a(), quote.b())
-                        && offer.getCostA().getCount() == quote.a().getCount()
-                        && offer.getCostB().getCount() == quote.b().getCount()) {
+                if (quote.satisfiedBy(offer)) {
                     return true;
                 }
             }
@@ -136,19 +137,21 @@ public class TradingStationBlockEntity extends BlockEntity
     }
 
     @Override
-    public void load(CompoundTag compoundTag) {
-        super.load(compoundTag);
+    protected void loadAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
+        super.loadAdditional(compoundTag, provider);
 
-        inputs.fromTag(compoundTag.getList("Inputs", Tag.TAG_COMPOUND));
-        outputs.fromTag(compoundTag.getList("Outputs", Tag.TAG_COMPOUND));
-        quotes.fromTag(compoundTag.getList("Quotes", Tag.TAG_COMPOUND));
+        inputs.fromTag(compoundTag.getList("Inputs", Tag.TAG_COMPOUND), provider);
+        outputs.fromTag(compoundTag.getList("Outputs", Tag.TAG_COMPOUND), provider);
+        quotes.fromTag(compoundTag.getList("Quotes", Tag.TAG_COMPOUND), provider);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag compoundTag) {
-        compoundTag.put("Inputs", inputs.createTag());
-        compoundTag.put("Outputs", outputs.createTag());
-        compoundTag.put("Quotes", quotes.createTag());
+    protected void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
+        super.saveAdditional(compoundTag, provider);
+
+        compoundTag.put("Inputs", inputs.createTag(provider));
+        compoundTag.put("Outputs", outputs.createTag(provider));
+        compoundTag.put("Quotes", quotes.createTag(provider));
     }
 
     @Nullable
@@ -158,9 +161,9 @@ public class TradingStationBlockEntity extends BlockEntity
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
-        var nbt = super.getUpdateTag();
-        saveAdditional(nbt);
+    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+        var nbt = super.getUpdateTag(provider);
+        saveAdditional(nbt, provider);
         return nbt;
     }
 

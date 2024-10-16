@@ -1,9 +1,8 @@
 package me.ramidzkh.vts.mixins;
 
 import me.ramidzkh.vts.block.MerchantScreenHandler;
-import me.ramidzkh.vts.VillagerTradingStation;
+import me.ramidzkh.vts.block.TradeSelectionPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.MerchantScreen;
 import net.minecraft.network.chat.Component;
@@ -28,8 +27,7 @@ public abstract class MerchantScreenMixin extends AbstractContainerScreen<Mercha
     @Inject(method = "postButtonClick", at = @At("HEAD"), cancellable = true)
     private void postButtonClick(CallbackInfo callbackInfo) {
         if (MerchantScreenHandler.inscribe(minecraft.player, shopItem, menu)) {
-            ClientPlayNetworking.send(VillagerTradingStation.INSCRIBE_QUOTE,
-                    PacketByteBufs.create().writeVarInt(shopItem));
+            ClientPlayNetworking.send(new TradeSelectionPayload(shopItem));
             callbackInfo.cancel();
         }
     }

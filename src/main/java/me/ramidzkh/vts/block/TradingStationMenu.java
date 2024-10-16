@@ -35,7 +35,7 @@ public class TradingStationMenu extends AbstractContainerMenu {
             this.addSlot(new Slot(quotes, j, 8, 17 + j * 18) {
                 @Override
                 public boolean mayPlace(ItemStack itemStack) {
-                    return itemStack.is(VillagerTradingStation.QUOTE_ITEM);
+                    return itemStack.has(VillagerTradingStation.QUOTE);
                 }
             });
         }
@@ -71,14 +71,17 @@ public class TradingStationMenu extends AbstractContainerMenu {
     @Override
     public ItemStack quickMoveStack(Player player, int invSlot) {
         var newStack = ItemStack.EMPTY;
-        var slot = getSlot(invSlot);
+        var slot = this.slots.get(invSlot);
 
         if (slot != null && slot.hasItem()) {
             var originalStack = slot.getItem();
             newStack = originalStack.copy();
 
-            if (invSlot < 21 ? !this.moveItemStackTo(originalStack, 21, 57, true)
-                    : !this.moveItemStackTo(originalStack, 0, 21, false)) {
+            if (invSlot < 21) {
+                if (!this.moveItemStackTo(originalStack, 21, this.slots.size(), true)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (!this.moveItemStackTo(originalStack, 0, 21, false)) {
                 return ItemStack.EMPTY;
             }
 

@@ -20,6 +20,7 @@ public abstract class VillagerGoalPackagesMixin {
     private static List<Pair<BehaviorControl<? super Villager>, Integer>> modify(
             List<Pair<BehaviorControl<? super Villager>, Integer>> list) {
         var copy = new ArrayList<Pair<BehaviorControl<? super Villager>, Integer>>();
+        var added = false;
 
         for (var pair : list) {
             copy.add(pair);
@@ -27,12 +28,13 @@ public abstract class VillagerGoalPackagesMixin {
             if (pair.getFirst() instanceof WorkAtPoi) {
                 // Trading is equivalent to working
                 copy.add(Pair.of(new TradeAtStation(), pair.getSecond()));
-            } else if (pair.getSecond() == 5) {
+            } else if (pair.getSecond() == 5 && !added) {
                 // STATION_SITE is equivalent to SECONDARY_JOB_SITE
                 // Note that @ModifyArg cannot capture the arguments of the target method like some other injectors can
                 // Inline f = 0.5f
                 copy.add(Pair.of(StrollToPoiList.create(VillagerTradingStation.STATION_SITE, 0.5f, 1, 6,
                         MemoryModuleType.JOB_SITE), 5));
+                added = true;
             }
         }
 
