@@ -73,7 +73,7 @@ public class TradingStationBlock extends BaseEntityBlock {
     }
 
     @Override
-    public VoxelShape getOcclusionShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
+    protected VoxelShape getOcclusionShape(BlockState blockState) {
         return Shapes.empty();
     }
 

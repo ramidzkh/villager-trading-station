@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -48,7 +48,7 @@ public class QuoteItem extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
+    public InteractionResult use(Level level, Player player, InteractionHand interactionHand) {
         var hand = player.getItemInHand(interactionHand);
 
         if (player.isShiftKeyDown()) {
@@ -58,11 +58,11 @@ public class QuoteItem extends Item {
                 if (player.getAbilities().instabuild || storage.extract(ItemVariant.of(hand), 1, transaction) == 1) {
                     storage.offerOrDrop(ItemVariant.of(Items.PAPER), 1, transaction);
                     transaction.commit();
-                    return InteractionResultHolder.success(player.getItemInHand(interactionHand));
+                    return InteractionResult.SUCCESS;
                 }
             }
         }
 
-        return InteractionResultHolder.pass(hand);
+        return InteractionResult.PASS;
     }
 }
