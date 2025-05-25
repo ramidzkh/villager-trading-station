@@ -12,9 +12,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 public class QuoteItem extends Item {
 
@@ -23,28 +24,13 @@ public class QuoteItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, List<Component> list,
-            TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, TooltipDisplay tooltipDisplay,
+            Consumer<Component> consumer, TooltipFlag tooltipFlag) {
         var quote = itemStack.get(VillagerTradingStation.QUOTE);
 
-        if (quote == null) {
-            return;
+        if (quote != null) {
+            quote.addToTooltip(tooltipContext, consumer, tooltipFlag, itemStack);
         }
-
-        var a = quote.a();
-        var b = quote.b();
-        var result = quote.result();
-
-        list.add(Component.literal("- Requires ").append(a.itemStack().getDisplayName()).append(" * ")
-                .append(Integer.toString(a.count())));
-
-        b.ifPresent(cost -> {
-            list.add(Component.literal("- Requires ").append(cost.itemStack().getDisplayName()).append(" * ")
-                    .append(Integer.toString(cost.count())));
-        });
-
-        list.add(Component.literal("- Trades for ").append(result.getDisplayName()).append(" * ")
-                .append(Integer.toString(result.getCount())));
     }
 
     @Override

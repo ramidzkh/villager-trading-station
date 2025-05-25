@@ -16,7 +16,7 @@ public class TradingStationBlockEntityRenderer implements BlockEntityRenderer<Tr
 
     @Override
     public void render(TradingStationBlockEntity tradingStation, float partialTicks, PoseStack matrices,
-            MultiBufferSource multiBufferSource, int light, int overlay) {
+            MultiBufferSource multiBufferSource, int light, int overlay, Vec3 camera) {
         var variants = new ArrayList<ItemStack>();
 
         for (var view : tradingStation.getItemStorage(null)) {

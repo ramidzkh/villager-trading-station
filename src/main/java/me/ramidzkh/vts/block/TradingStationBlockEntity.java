@@ -12,7 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -24,7 +24,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.trading.MerchantOffer;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -130,19 +129,22 @@ public class TradingStationBlockEntity extends BlockEntity
         return false;
     }
 
-    public void drop(Level level, BlockPos blockPos) {
-        Containers.dropContents(level, blockPos, inputs);
-        Containers.dropContents(level, blockPos, outputs);
-        Containers.dropContents(level, blockPos, quotes);
+    @Override
+    public void preRemoveSideEffects(BlockPos blockPos, BlockState blockState) {
+        if (level != null) {
+            Containers.dropContents(level, blockPos, inputs);
+            Containers.dropContents(level, blockPos, outputs);
+            Containers.dropContents(level, blockPos, quotes);
+        }
     }
 
     @Override
     protected void loadAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
         super.loadAdditional(compoundTag, provider);
 
-        inputs.fromTag(compoundTag.getList("Inputs", Tag.TAG_COMPOUND), provider);
-        outputs.fromTag(compoundTag.getList("Outputs", Tag.TAG_COMPOUND), provider);
-        quotes.fromTag(compoundTag.getList("Quotes", Tag.TAG_COMPOUND), provider);
+        inputs.fromTag(compoundTag.getList("Inputs").orElseGet(ListTag::new), provider);
+        outputs.fromTag(compoundTag.getList("Outputs").orElseGet(ListTag::new), provider);
+        quotes.fromTag(compoundTag.getList("Quotes").orElseGet(ListTag::new), provider);
     }
 
     @Override

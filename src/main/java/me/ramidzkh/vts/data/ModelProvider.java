@@ -7,8 +7,6 @@ import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
-import net.minecraft.client.data.models.blockstates.Variant;
-import net.minecraft.client.data.models.blockstates.VariantProperties;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -24,12 +22,11 @@ public class ModelProvider extends FabricModelProvider {
     @Override
     public void generateBlockStateModels(BlockModelGenerators generator) {
         generator.blockStateOutput.accept(MultiVariantGenerator
-                .multiVariant(VillagerTradingStation.TRADING_STATION_BLOCK, Variant.variant()
-                        .with(VariantProperties.MODEL, id("block/trading_station")))
-                .with(PropertyDispatch.property(BlockStateProperties.HORIZONTAL_AXIS)
-                        .select(Direction.Axis.X, Variant.variant())
-                        .select(Direction.Axis.Z, Variant.variant()
-                                .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))));
+                .dispatch(VillagerTradingStation.TRADING_STATION_BLOCK)
+                .with(PropertyDispatch.initial(BlockStateProperties.HORIZONTAL_AXIS)
+                        .select(Direction.Axis.X, BlockModelGenerators.plainVariant(id("block/trading_station")))
+                        .select(Direction.Axis.Z, BlockModelGenerators.plainVariant(id("block/trading_station"))
+                                .with(BlockModelGenerators.Y_ROT_90))));
     }
 
     @Override

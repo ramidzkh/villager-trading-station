@@ -1,5 +1,7 @@
 package me.ramidzkh.vts.block;
 
+import com.mojang.math.OctahedralGroup;
+import com.mojang.math.Quadrant;
 import com.mojang.serialization.MapCodec;
 import me.ramidzkh.vts.VillagerTradingStation;
 import net.minecraft.core.BlockPos;
@@ -42,7 +44,8 @@ public class TradingStationBlock extends BaseEntityBlock {
                 Shapes.box(0.15625, 0.34375, 0.09375, 0.21875, 0.59375, 0.15625),
                 Shapes.box(0.78125, 0.34375, 0.09375, 0.84375, 0.59375, 0.15625),
                 Shapes.box(0.15625, 0.28125, -0.03125, 0.84375, 0.34375, 0.28125));
-        SHAPES[Direction.Axis.Z.ordinal()] = rotateShape(Direction.NORTH, Direction.WEST, shape);
+        SHAPES[Direction.Axis.Z.ordinal()] = Shapes.rotate(shape,
+                OctahedralGroup.fromXYAngles(Quadrant.R0, Quadrant.R90));
     }
 
     public TradingStationBlock(Properties properties) {
@@ -90,15 +93,6 @@ public class TradingStationBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void onRemove(BlockState blockState, Level level, BlockPos blockPos, BlockState blockState2, boolean bl) {
-        if (level.getBlockEntity(blockPos) instanceof TradingStationBlockEntity tradingStation) {
-            tradingStation.drop(level, blockPos);
-        }
-
-        super.onRemove(blockState, level, blockPos, blockState2, bl);
-    }
-
-    @Override
     public RenderShape getRenderShape(BlockState blockState) {
         return RenderShape.MODEL;
     }
@@ -107,19 +101,5 @@ public class TradingStationBlock extends BaseEntityBlock {
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
         return VillagerTradingStation.TRADING_STATION_BLOCK_ENTITY.create(blockPos, blockState);
-    }
-
-    public static VoxelShape rotateShape(Direction from, Direction to, VoxelShape shape) {
-        var buffer = new VoxelShape[] { shape, Shapes.empty() };
-        var times = (to.get2DDataValue() - from.get2DDataValue() + 4) % 4;
-
-        for (var i = 0; i < times; i++) {
-            buffer[0].forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> buffer[1] = Shapes.or(buffer[1],
-                    Shapes.create(1 - maxZ, minY, minX, 1 - minZ, maxY, maxX)));
-            buffer[0] = buffer[1];
-            buffer[1] = Shapes.empty();
-        }
-
-        return buffer[0];
     }
 }
