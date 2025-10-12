@@ -3,7 +3,7 @@ package me.ramidzkh.vts.block;
 import me.ramidzkh.vts.VillagerTradingStation;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -32,7 +32,7 @@ public class TradingStationScreen extends AbstractContainerScreen<TradingStation
     protected void renderBg(GuiGraphics graphics, float tickDelta, int mouseX, int mouseY) {
         var k = (this.width - this.imageWidth) / 2;
         var l = (this.height - this.imageHeight) / 2;
-        graphics.blit(RenderType::guiTextured, CONTAINER_LOCATION, k, l, 0.0F, 0.0F, this.imageWidth, this.imageHeight,
-                256, 256);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, CONTAINER_LOCATION, k, l, 0.0F, 0.0F, this.imageWidth,
+                this.imageHeight, 256, 256);
     }
 }

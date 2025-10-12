@@ -18,7 +18,7 @@ public class ItemTagsProvider extends FabricTagProvider.ItemTagProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        getOrCreateTagBuilder(VillagerTradingStation.QUOTE_CONVERTABLE).add(Items.PAPER,
+        valueLookupBuilder(VillagerTradingStation.QUOTE_CONVERTABLE).add(Items.PAPER,
                 VillagerTradingStation.QUOTE_ITEM);
     }
 }

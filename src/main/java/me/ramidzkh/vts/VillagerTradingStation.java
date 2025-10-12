@@ -4,6 +4,7 @@ import me.ramidzkh.vts.ai.TradingStationSensor;
 import me.ramidzkh.vts.block.*;
 import me.ramidzkh.vts.item.Quote;
 import me.ramidzkh.vts.item.QuoteItem;
+import net.fabricmc.fabric.api.item.v1.ComponentTooltipAppenderRegistry;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -51,7 +52,7 @@ public interface VillagerTradingStation {
                 .sound(SoundType.WOOD)
                 .strength(0.5F)
                 .requiresCorrectToolForDrops();
-        ResourceKey<Block> key = ResourceKey.create(Registries.BLOCK, id("trading_station"));
+        ResourceKey<Block> key = ResourceKey.create(Registries.BLOCK, TRADING_STATION);
         return Registry.register(BuiltInRegistries.BLOCK, key, new TradingStationBlock(settings.setId(key)));
     });
 
@@ -68,7 +69,7 @@ public interface VillagerTradingStation {
 
     Item TRADING_STATION_ITEM = Util.make(() -> {
         Item.Properties settings = new Item.Properties().useBlockDescriptionPrefix();
-        ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, id("trading_station"));
+        ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, TRADING_STATION);
         return Registry.register(BuiltInRegistries.ITEM, key,
                 new BlockItem(TRADING_STATION_BLOCK, settings.setId(key)));
     });
@@ -99,6 +100,8 @@ public interface VillagerTradingStation {
 
         PayloadTypeRegistry.playC2S().register(TradeSelectionPayload.TYPE, TradeSelectionPayload.CODEC);
         ServerPlayNetworking.registerGlobalReceiver(TradeSelectionPayload.TYPE, MerchantScreenHandler::onInscribeQuote);
+
+        ComponentTooltipAppenderRegistry.addFirst(VillagerTradingStation.QUOTE);
 
         ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.FUNCTIONAL_BLOCKS).register(entries -> {
             entries.accept(TRADING_STATION_ITEM, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);

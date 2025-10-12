@@ -10,13 +10,7 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.SidedStorageBlockEntity;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.npc.AbstractVillager;
@@ -27,6 +21,8 @@ import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -139,34 +135,21 @@ public class TradingStationBlockEntity extends BlockEntity
     }
 
     @Override
-    protected void loadAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
-        super.loadAdditional(compoundTag, provider);
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
 
-        inputs.fromTag(compoundTag.getList("Inputs").orElseGet(ListTag::new), provider);
-        outputs.fromTag(compoundTag.getList("Outputs").orElseGet(ListTag::new), provider);
-        quotes.fromTag(compoundTag.getList("Quotes").orElseGet(ListTag::new), provider);
+        ContainerHelper.loadAllItems(input.childOrEmpty("Inputs"), inputs.items);
+        ContainerHelper.loadAllItems(input.childOrEmpty("Outputs"), outputs.items);
+        ContainerHelper.loadAllItems(input.childOrEmpty("Quotes"), quotes.items);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
-        super.saveAdditional(compoundTag, provider);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
 
-        compoundTag.put("Inputs", inputs.createTag(provider));
-        compoundTag.put("Outputs", outputs.createTag(provider));
-        compoundTag.put("Quotes", quotes.createTag(provider));
-    }
-
-    @Nullable
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
-        var nbt = super.getUpdateTag(provider);
-        saveAdditional(nbt, provider);
-        return nbt;
+        ContainerHelper.saveAllItems(output.child("Inputs"), inputs.items);
+        ContainerHelper.saveAllItems(output.child("Outputs"), outputs.items);
+        ContainerHelper.saveAllItems(output.child("Quotes"), quotes.items);
     }
 
     @Override
