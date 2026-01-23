@@ -1,4 +1,4 @@
-@MethodsReturnNonnullByDefault
+@NullMarked
 package me.ramidzkh.vts;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
+import org.jspecify.annotations.NullMarked;

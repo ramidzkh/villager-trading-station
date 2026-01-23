@@ -1,7 +1,5 @@
 package me.ramidzkh.vts.block;
 
-import com.mojang.math.OctahedralGroup;
-import com.mojang.math.Quadrant;
 import com.mojang.serialization.MapCodec;
 import me.ramidzkh.vts.VillagerTradingStation;
 import net.minecraft.core.BlockPos;
@@ -24,29 +22,25 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
+
 public class TradingStationBlock extends BaseEntityBlock {
 
     public static final MapCodec<TradingStationBlock> CODEC = simpleCodec(TradingStationBlock::new);
 
-    private static final VoxelShape[] SHAPES = new VoxelShape[3];
-
-    static {
-        var shape = SHAPES[Direction.Axis.X.ordinal()] = Shapes.or(
-                Shapes.box(0.4375, 0.21875, 0.4375, 0.5625, 0.84375, 0.5625),
-                Shapes.box(0.0625, 0, 0.0625, 0.9375, 0.0625, 0.9375),
-                Shapes.box(0.421875, 0.9375, 0.21875, 0.578125, 1, 0.78125),
-                Shapes.box(0.1875, 0.59375, 0.84375, 0.8125, 0.65625, 0.90625),
-                Shapes.box(0.15625, 0.34375, 0.84375, 0.21875, 0.59375, 0.90625),
-                Shapes.box(0.78125, 0.34375, 0.84375, 0.84375, 0.59375, 0.90625),
-                Shapes.box(0.15625, 0.28125, 0.71875, 0.84375, 0.34375, 1.03125),
-                Shapes.box(0.25, 0.0625, 0.25, 0.75, 0.125, 0.75),
-                Shapes.box(0.1875, 0.59375, 0.09375, 0.8125, 0.65625, 0.15625),
-                Shapes.box(0.15625, 0.34375, 0.09375, 0.21875, 0.59375, 0.15625),
-                Shapes.box(0.78125, 0.34375, 0.09375, 0.84375, 0.59375, 0.15625),
-                Shapes.box(0.15625, 0.28125, -0.03125, 0.84375, 0.34375, 0.28125));
-        SHAPES[Direction.Axis.Z.ordinal()] = Shapes.rotate(shape,
-                OctahedralGroup.fromXYAngles(Quadrant.R0, Quadrant.R90));
-    }
+    private static final Map<Direction.Axis, VoxelShape> SHAPES = Shapes.rotateHorizontalAxis(Shapes.or(
+            Block.box(-0.5, 4.5, 2.5, 4.5, 5.5, 13.5),
+            Block.box(1.0, 0.0, 1.0, 15.0, 1.0, 15.0),
+            Block.box(1.5, 5.5, 2.5, 2.5, 9.5, 3.5),
+            Block.box(1.5, 5.5, 12.5, 2.5, 9.5, 13.5),
+            Block.box(1.5, 9.5, 3.0, 2.5, 10.5, 13.0),
+            Block.box(3.5, 15.0, 6.8, 12.5, 16.0, 9.3),
+            Block.box(4.0, 1.0, 4.0, 12.0, 2.0, 12.0),
+            Block.box(7.0, 3.5, 7.0, 9.0, 13.5, 9.0),
+            Block.box(11.5, 4.5, 2.5, 16.5, 5.5, 13.5),
+            Block.box(13.5, 5.5, 2.5, 14.5, 9.5, 3.5),
+            Block.box(13.5, 5.5, 12.5, 14.5, 9.5, 13.5),
+            Block.box(13.5, 9.5, 3.0, 14.5, 10.5, 13.0)));
 
     public TradingStationBlock(Properties properties) {
         super(properties);
@@ -72,7 +66,7 @@ public class TradingStationBlock extends BaseEntityBlock {
     @Override
     public VoxelShape getShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos,
             CollisionContext collisionContext) {
-        return SHAPES[blockState.getValue(BlockStateProperties.HORIZONTAL_AXIS).ordinal()];
+        return SHAPES.get(blockState.getValue(BlockStateProperties.HORIZONTAL_AXIS));
     }
 
     @Override
